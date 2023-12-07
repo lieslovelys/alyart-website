@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AlyArt</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400&family=Poppins:wght@400;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    
+  <style>
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: url(img/blue.jpg);
+    }
+    
+    .art-gallery {
+      margin-top: 20px;
+    }
+
+    .art-item {
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 8px rgba(234, 229, 229, 0.1), 0.1;
+      transition: box-shadow 0.3s ease-in-out;
+    }
+
+    .art-item:hover {
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .art-item img {
+      width: 100%;
+      height: auto;
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .art-item:hover img {
+      transform: scale(1.1);
+    }
+
+    .art-overlay {
+      position: absolute;
+      bottom: -100%;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      background: rgba(0, 0, 0, 0.7);
+      color: #fff;
+      padding: 10px;
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out;
+      
+    }
+
+    .art-item:hover .art-overlay {
+      opacity: 1;
+    }
+
+    .art-overlay h5,
+    .art-overlay p {
+      margin: 0;
+      
+    }
+
+    #gallery {
+      text-align: center;
+    }
+
+
+    #gallery, #about, #contact {
+      font-weight: bold; 
+      color: #fff;
+      font-family: 'Roboto', sans-serif;
+      margin: 20px;
+      margin-bottom: 20px;
+    }
+    
+    #about, #contact {
+        text-align: center;
+    }
+
+  .gallery-item {
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+  }
+
+  .gallery-item img {
+     transition: transform 0.3s ease-in-out;
+  }
+
+  .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    background-color: rgba(255, 255, 255, 0.7); 
+    pointer-events: none; 
+    transition: opacity 0.3s ease-in-out;
+  }
+
+  .gallery-item:hover img,
+  .gallery-item.clicked img {
+    transform: scale(1.2); 
+  }
+
+  .gallery-item:hover .overlay,
+  .gallery-item.clicked .overlay {
+    opacity: 1;
+  }
+
+    nav {
+      background-color: #031d74; 
+      height: 70px;
+    }
+
+    .nav-wrapper {
+      width: 90%; 
+      margin: 0 auto;
+    }
+
+    nav a {
+      color: #fff;
+    }
+
+    nav a.brand-logo {
+      font-size: 2.5rem;
+      color: rgb(253, 239, 239);
+      font-family: 'Roboto', sans-serif; 
+      font-weight: bold;
+    }
+
+    .content-section {
+      display: none; 
+    }
+
+    .art-item {
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      transition: box-shadow 0.3s ease-in-out;
+    }
+
+    .art-item:hover {
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .art-item img {
+      width: 100%;
+      height: auto;
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .art-item:hover img {
+      transform: scale(1.1);
+    }
+
+    .art-overlay {
+      position: absolute;
+      bottom: -100%;
+      left: 0;
+      width: 100%;
+      background: rgba(236, 224, 224, 0.982);
+      color: #fff;
+      padding: 10px;
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out, bottom 0.3s ease-in-out;
+    }
+
+    .art-item:hover .art-overlay {
+      opacity: 1;
+      bottom: 0;
+    }
+
+    nav {
+      background-color: rgb(255, 245, 245) 89, 89;
+    }
+
+    .nav-wrapper {
+      width: 90%;
+      margin: 0 auto;
+    }
+
+    nav a {
+      color: #fff;
+    }
+
+    nav a.brand-logo {
+      font-size: 1.5rem;
+    }
+
+    nav a i {
+      color: #fff !important;
+    }
+  
+    .content-section {
+      display: none;
+    }
+
+    #home {
+      text-align: center;
+      padding-top: 50px;
+      display: block;
+      color: rgb(248, 238, 238) 60, 60;
+    }
+
+    #home h1 {
+      font-size: 3.5rem;
+      margin-bottom: 20px;
+      color: rgb(253, 239, 239);
+      font-family: 'Roboto', sans-serif; 
+      font-weight: bold;
+      
+    }
+
+    #home p {
+      font-size: 1.5rem;
+      margin-bottom: 40px;
+      color: rgb(253, 239, 239);
+      font-family: 'Roboto', sans-serif;
+      font-weight: bold;
+      
+    }
+
+    #home img {
+      border-radius: 50%;
+      width: 250px;
+      height: 250px;
+      object-fit: cover;
+      margin-bottom: 20px;
+      padding: 10px;
+    }
+    
+
+    #social-icons {
+        text-align: center;
+      margin-top: 20px;
+      margin-bottom: 50px;
+    }
+
+    #social-icons a {
+      display: inline-block;
+      size: 10rem;
+      margin: 0 40px;
+      color: rgb(18, 18, 255);
+
+    }
+ 
+    footer {
+        color: #fff3f3;
+        font-weight: bold;
+        font-family: 'Roboto', sans-serif;
+        text-align: center;
+    }
+
+    footer.page-footer {
+        background-color: rgb(15, 3, 102); 
+        margin-top: auto;
+        z-index: 1;
+    }
+    footer {
+        background-image: url();
+        background-color: #c4aeae; 
+    }
+
+    footer h5,
+    footer p {
+      color: #fff3f3;
+      
+    }
+
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-wrapper">
+      <a href="#" class="fas fa-paint-brush painter-icon"></a>AlyArt Gallery</a>
+      <a href="#" class="sidenav-trigger" data-target="mobile-menu">
+        <i class="fas fa-bars"></i>
+      </a>
+      <ul class="sidenav grey lighten-2" id="mobile-menu">
+        <li><a href="#" onclick="showSection('home')">Home</a></li>
+        <li><a href="#" onclick="showSection('gallery')">Gallery</a></li>
+        <li><a href="#" onclick="showSection('about')">About</a></li>
+        <li><a href="#" onclick="showSection('contact')">Contact Us</a></li>
+      </ul>
+      <ul id="nav-mobile" class="right hide-on-med-and-down">
+        <li><a href="#home" onclick="showSection('home')">Home</a></li>
+        <li><a href="#gallery" onclick="showSection('gallery')">Gallery</a></li>
+        <li><a href="#about" onclick="showSection('about')">About</a></li>
+        <li><a href="#contact" onclick="showSection('contact')">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+    <div class="container">
+    <section id="home" class="content-section">
+       <h1>Welcome to  AlyArt Gallery</h1>
+       <p>Explore a collection of beautiful artworks that captivate the soul and stir the imagination. Our gallery showcases a diverse array of artistic expressions, from traditional paintings to modern digital art.</p>
+
+   
+       <img src="img/aly.jpg" alt="me">
+       <p>This is Aly, welcoming you in the world of art!</p>
+       <p>“The one thing that you have that nobody else has is you. Your voice, your mind, your story, your vision. So write and draw and build and play and dance and live only as you can.” – Neil Gaiman</p>
+       
+    </section>
+
+    <div id="social-icons">
+        <a href="https://www.facebook.com/LiesLoveLyss" class="btn-floating btn-small indigo darken-4" target="_blank" alt="Facebook">
+            <i class="fab fa-facebook"></i></a>
+        <a href="https://twitter.com/Lys12258137" class="btn-floating btn-small indigo darken-4" target="_blank" alt="Twitter">
+            <i class="fab fa-twitter"></i></a>
+        <a href=https://instagram.com/lieslovelys?igshid=M2RkZGJiMzhjOQ=="" class="btn-floating btn-small indigo darken-4" target="_blank"alt="Instagram">
+            <i class="fab fa-instagram"></i></a>
+    </div>
+
+    <section id="gallery" class="content-section">
+      <h2>Gallery</h2>
+      <h2>Discover the Stunning Artworks in Our Gallery</h2>
+        <p>Step into a world of creativity and beauty. Our gallery features a curated collection of artworks that span various genres and styles. Click on each piece below for a closer look:</p>
+    
+                    <div class="row">
+                        <div class="col s12 l4">
+                            <img src="img/house.jpg" alt="" class="responsive-img materialboxed">
+                        </div>
+                        <div class="col s12 l6 offset-l1">
+                          <h2 class="indigo-text text-darken-4">Madrigal Houses</h2>
+                          <h5>Artwork 1</h5>
+                          <p>Artist: Renz Rainier Pasagdan</p>
+                          <a href="https://www.facebook.com/renz.rainier212" class="btn-floating btn-small indigo darken-4" target="_blank" alt="Facebook">
+                            <i class="fab fa-facebook"></i></a>
+                          <p> The Casita itself is a vibrant and enchanting structure, adorned with colorful patterns and intricate designs. The magic within the house is a central element of the story, as it provides each family member with a special power that contributes to the overall harmony and well-being of the family and the community. The Madrigal house becomes a symbol of the family's unity and the strength that comes from embracing each member's distinctive qualities. The Casita is a magical place filled with love, warmth, and the rich cultural heritage of the Madrigal family.</p>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col s12 l4 offset-l1 push-l7">
+                            <img src="img/mans.jpg" alt="" class="responsive-img materialboxed">
+                        </div>
+                        <div class="col s12 l6 offset-l1 pull-l5 center-align">
+                          <h2 class="indigo-text text-darken-4">The Man</h2>
+                          <h5>Arwork 2</h5>
+                          <p>Artist: Sean Denver Smaniego</p>
+                          <a href="https://www.facebook.com/seandenver.alien" class="btn-floating btn-small indigo darken-4" target="_blank" alt="Facebook">
+                            <i class="fab fa-facebook"></i></a>
+                          <p>In this captivating artwork, the stark contrast between the weathered face of an adventurous wanderer, marked by the sun's embrace and lines etched with tales of exploration, converges with the polished countenance of an urban intellectual, radiating intellect and refinement. Through a single gaze, the painting encapsulates the duality of divergent lifestyles—one shaped by the raw allure of nature's unpredictability and the other by the nuanced complexities of urban existence. Together, these faces tell a visual tale of two distinct worlds harmonizing in the canvas of life.</p>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col s12 l4">
+                            <img src="img/bird.jpg" alt="" class="responsive-img materialboxed">
+                        </div>
+                        <div class="col s12 l6 offset-l1">
+                          <h2 class="indigo-text text-darken-4">Bird</h2>
+                          <h5>Artwork 3</h5>
+                          <p>Artist: Jomar Dindo</p>
+                          <a href="https://www.facebook.com/jomar.dindo.7" class="btn-floating btn-small indigo darken-4" target="_blank" alt="Facebook">
+                            <i class="fab fa-facebook"></i></a>
+                          <p>Celebrating the Breathtaking Avian Wonders of the Philippines From the vibrant plumage of the Philippine Eagle to the melodious songs of the Luzon Bleeding-heart, our archipelago is a haven for unique and endangered bird species. Join us in marveling at the diverse feathered treasures that grace our skies, embodying the rich biodiversity and natural beauty of the Philippines.</p>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col s12 l4 offset-l1 push-l7">
+                            <img src="img/beauty.jpg" alt="" class="responsive-img materialboxed">
+                        </div>
+                        <div class="col s12 l6 offset-l1 pull-l5 center-align">
+                          <h2 class="indigo-text text-darken-4">The Beauty</h2>
+                          <h5>Artwork 4</h5>
+                          <p>Artist: John Zenn Godani</p>
+                          <a href="https://www.facebook.com/jhonzenn.godani" class="btn-floating btn-small indigo darken-4" target="_blank" alt="Facebook">
+                            <i class="fab fa-facebook"></i></a>
+                          <p>Physical beauty may be reflected in features such as symmetry, clear skin, expressive eyes, and a radiant smile. However, true beauty often transcends these superficial aspects, encompassing a person's unique charm, kindness, and the way they carry themselves. Ultimately, beauty is a dynamic and personal experience, influenced by cultural, societal, and individual perspectives.</p>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col s12 l4">
+                            <img src="img/checkmate.jpg" alt="" class="responsive-img materialboxed">
+                        </div>
+                        <div class="col s12 l6 offset-l1">
+                          <h2 class="indigo-text text-darken-4">Checkmate</h2>
+                          <h5>Artwork 5</h5>
+                          <p>Artist: John Earl Rance</p>
+                          <a href="https://www.facebook.com/earl.filibustersmo" class="btn-floating btn-small indigo darken-4" target="_blank" alt="Facebook">
+                            <i class="fab fa-facebook"></i></a>
+                          <p>"Checkmate" is a term commonly used in the game of chess when a player's king is in a position to be captured and there is no way to escape, resulting in the end of the game. In the context of love, the concept of "checkmate" can be metaphorically applied to signify a profound and decisive moment in a romantic relationship. It might represent a moment of clarity or realization when two individuals recognize and accept their mutual feelings, leading to a harmonious and conclusive connection. In this metaphorical sense, "checkmate" in love could symbolize the victory of mutual understanding, emotional alignment, and the endearing capture of each other's hearts, marking the triumph of love over uncertainties and hesitations.</p>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col s12 l4 offset-l1 push-l7">
+                            <img src="img/stephen.jpg" alt="" class="responsive-img materialboxed">
+                        </div>
+                        <div class="col s12 l6 offset-l1 pull-l5 center-align">
+                          <h2 class="indigo-text text-darken-4">The Basketball Man</h2>
+                          <h5>Arwork 6</h5>
+                          <p>Artist: George Mico Catipay</p>
+                          <a href="https://www.facebook.com/george.catipay.9" class="btn-floating btn-small indigo darken-4" target="_blank" alt="Facebook">
+                            <i class="fab fa-facebook"></i></a>
+                          <p>Curry has achieved numerous accolades, including multiple NBA Most Valuable Player (MVP) awards. He played a crucial role in leading the Golden State Warriors to multiple NBA championships. Known for his exceptional three-point shooting ability, ball-handling skills, and leadership on the court, Stephen Curry has had a significant impact on the game of basketball.</p>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col s12 l4">
+                            <img src="img/bruno.jpg" alt="" class="responsive-img materialboxed">
+                        </div>
+                        <div class="col s12 l6 offset-l1">
+                          <h2 class="indigo-text text-darken-4">Dog's Love</h2>
+                          <h5>Artwork 7</h5>
+                          <p>Artist: Jomar Dindo</p>
+                          <a href="https://www.facebook.com/jomar.dindo.7" class="btn-floating btn-small indigo darken-4" target="_blank" alt="Facebook">
+                            <i class="fab fa-facebook"></i></a>
+                          <p>Aly is the owner of the dog, sadly the dog passed away this year. This artwork is dedicated to Aly, who's friend with the artist.Dogs are extraordinary companions, celebrated for their loyalty, diverse personalities, and affectionate nature. From the playful energy of a Labrador to the regal demeanor of a Greyhound, these four-legged friends come in various breeds, sizes, and coat types. With expressive eyes and wagging tails, dogs convey a wide range of emotions, forming deep connections with their human counterparts. Known for their intelligence, dogs serve as both loyal companions and versatile workers. Their unwavering love and boundless energy make them cherished members of families worldwide.</p>
+                        </div>
+                      </div>
+      </div>
+    </section>
+
+        <section id="about" class="content-section">
+            <h2>About Us</h2>
+            <p>Welcome to our artistic haven, where every stroke, color, and creation tells a unique story.</p>
+            <p>Dive into a world where imagination knows no bounds. Our website is a celebration of art in all its forms—where creativity thrives, and every piece unfolds a narrative.</p> 
+            <p>Join us on this visual journey, where the canvas is limitless, and artistic expression takes center stage. Embrace the beauty of the brushstroke and the power of visual storytelling</p>
+            <p> This is not just a website; it's an ode to the boundless world of art. Explore, experience, and be inspired.</p>
+            <p>Learn more about our art gallery and the passionate artists behind the masterpieces.</p>
+        </section>
+
+        <section id="contact" class="content-section">
+            <h2>Contact Us</h2>
+            <p>Have questions or want to inquire about a specific artwork? Feel free to reach out to us. We'd love to hear from you!</p>
+            <p>Contact Number: 09451759400</p>
+            <p>Email Address: esponillaalyssa@gmail.com</p>
+            <p>You can also contact us in our social media where you can see in the bottom of the page. Thank you!</p>
+        </section>
+        </div>
+
+  <footer class="page-footer">
+    <div class="container">
+      <h5>AlyArt Gallery</h5>
+      <p>&copy; 2023 AlyArt. All Rights Reserved.</p>
+  </div>
+    </div>
+  </footer>
+
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  
+  <script>
+    
+    document.addEventListener('DOMContentLoaded', function() {
+      M.AutoInit();
+    });
+
+    function showSection(sectionId) {
+     
+      var sections = document.getElementsByClassName('content-section');
+      for (var i = 0; i < sections.length; i++) {
+        sections[i].style.display = 'none';
+      }
+
+      var selectedSection = document.getElementById(sectionId);
+      if (selectedSection) {
+        selectedSection.style.display = 'block';
+      }
+    }
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        var galleryItems = document.querySelectorAll('.gallery-item');
+
+    document.addEventListener('DOMContentLoaded', function() {
+      M.AutoInit();
+    });
+
+    galleryItems.forEach(function(item) {
+      item.addEventListener('mousemove', function(e) {
+        var rect = e.target.getBoundingClientRect();
+        var x = e.clientX - rect.left;
+        var y = e.clientY - rect.top;
+
+        var transformValue = `translate(-${x}px, -${y}px) scale(1.2)`;
+        e.target.style.transform = transformValue;
+      })
+    ;
+
+      item.addEventListener('mouseleave', function(e) {
+        if (!item.classList.contains('clicked')) {
+          e.target.style.transform = 'scale(1)';
+        }
+      })
+    ;
+    $(document).ready(function(){
+      $('.sidenav').sidenav();
+  });
+
+
+      item.addEventListener('click', function(e) {
+        item.classList.toggle('clicked');
+      });
+    });
+});
+     
+
+</script>
+</div>
+
+  </script>
+</body>
+</html>
