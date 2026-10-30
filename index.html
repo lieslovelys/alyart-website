@@ -1,517 +1,2448 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AlyArt</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400&family=Poppins:wght@400;700&display=swap">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="AlyArt Gallery: a curated collection of artworks by talented artists.">
+  <meta name="theme-color" content="#060d24">
+  <title>AlyArt Gallery</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎨</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Jost:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,500;0,700;1,500&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <script>document.documentElement.classList.add('js');</script>
+
   <style>
+    :root {
+      --navy-900: #060d24;
+      --navy-800: #0a1535;
+      --navy-700: #0f1f4d;
+      --gold: #d9b66f;
+      --gold-soft: #f1dfae;
+      --gold-deep: #b88a3a;
+      --cream: #f5efe3;
+      --ink: #14182b;
+      --muted: #6b7089;
+      --serif: 'Playfair Display', Georgia, serif;
+      --sans: 'Jost', 'Poppins', sans-serif;
+      --script: 'Dancing Script', cursive;
+      --section-pad: clamp(70px, 10vw, 120px);
+    }
+
+    * { box-sizing: border-box; }
+
+    [hidden] { display: none !important; }
+
+    html {
+      scroll-behavior: smooth;
+      -webkit-text-size-adjust: 100%;
+    }
+
     body {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      background: url(img/blue.jpg);
-    }
-    
-    .art-gallery {
-      margin-top: 20px;
-    }
-
-    .art-item {
-      position: relative;
-      overflow: hidden;
-      margin-bottom: 20px;
-      box-shadow: 0 4px 8px rgba(234, 229, 229, 0.1), 0.1;
-      transition: box-shadow 0.3s ease-in-out;
+      margin: 0;
+      overflow-x: hidden;
+      font-family: var(--sans);
+      font-size: 1.05rem;
+      line-height: 1.7;
+      color: var(--cream);
+      background: var(--navy-900);
+      -webkit-font-smoothing: antialiased;
     }
 
-    .art-item:hover {
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    img { max-width: 100%; }
+
+    a { color: inherit; }
+
+    :focus-visible {
+      outline: 2px solid var(--gold);
+      outline-offset: 3px;
     }
 
-    .art-item img {
-      width: 100%;
-      height: auto;
-      transition: transform 0.3s ease-in-out;
+    .wrap {
+      width: min(1180px, 90%);
+      margin: 0 auto;
     }
 
-    .art-item:hover img {
-      transform: scale(1.1);
-    }
-
-    .art-overlay {
-      position: absolute;
-      bottom: -100%;
+    /* ---------- Scroll progress ---------- */
+    .progress {
+      position: fixed;
       top: 0;
       left: 0;
+      z-index: 120;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, var(--gold-deep), var(--gold-soft));
+      transform: scaleX(0);
+      transform-origin: left;
+    }
+
+    /* ---------- Buttons ---------- */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 50px;
+      padding: 0 30px;
+      border-radius: 999px;
+      font-family: var(--sans);
+      font-size: .85rem;
+      font-weight: 500;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border: 1px solid var(--gold);
+      cursor: pointer;
+      transition: transform .3s, background .3s, color .3s, box-shadow .3s;
+    }
+
+    .btn-gold {
+      background: var(--gold);
+      color: var(--navy-900);
+      box-shadow: 0 10px 30px -10px rgba(217, 182, 111, .7);
+    }
+
+    .btn-gold:hover {
+      transform: translateY(-3px);
+      background: var(--gold-soft);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--gold);
+    }
+
+    .btn-ghost:hover {
+      background: rgba(217, 182, 111, .12);
+      transform: translateY(-3px);
+    }
+
+    /* ---------- Navigation ---------- */
+    .nav {
+      position: fixed;
+      inset: 0 0 auto 0;
+      z-index: 50;
+      padding: 20px 0;
+      transition: padding .3s;
+    }
+
+    .nav::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background: rgba(6, 13, 36, .9);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: 0 1px 0 rgba(217, 182, 111, .25);
+      opacity: 0;
+      transition: opacity .3s;
+    }
+
+    .nav.scrolled { padding: 10px 0; }
+    .nav.scrolled::before { opacity: 1; }
+
+    .nav .wrap {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--serif);
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #fff;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .brand i { color: var(--gold); font-size: 1.2rem; }
+    .brand em { color: var(--gold); font-weight: 500; }
+
+    .menu {
+      display: flex;
+      gap: 30px;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .menu a {
+      position: relative;
+      padding: 6px 0;
+      font-size: .85rem;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: rgba(255, 255, 255, .82);
+      transition: color .3s;
+    }
+
+    .menu a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 0;
+      height: 1px;
+      background: var(--gold);
+      transition: width .3s;
+    }
+
+    .menu a:hover,
+    .menu a.active { color: var(--gold); }
+
+    .menu a:hover::after,
+    .menu a.active::after { width: 100%; }
+
+    .burger {
+      display: none;
+      position: relative;
+      z-index: 60;
+      background: none;
+      border: 0;
+      color: #fff;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    /* ---------- Pages (tabs) ---------- */
+    .page { display: none; }
+
+    .page.active {
+      display: block;
+      animation: pageIn .6s ease both;
+    }
+
+    @keyframes pageIn {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: none; }
+    }
+
+    .inner {
+      min-height: 100vh;
+      padding: 140px 0 var(--section-pad);
+    }
+
+    .inner.dark {
+      background:
+        radial-gradient(900px 500px at 100% 0%, rgba(42, 82, 201, .3), transparent 60%),
+        radial-gradient(700px 400px at 0% 100%, rgba(217, 182, 111, .1), transparent 70%),
+        linear-gradient(180deg, var(--navy-800), var(--navy-900));
+    }
+
+    /* ---------- Hero ---------- */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 130px 0 90px;
+      overflow: hidden;
+      background:
+        radial-gradient(1100px 600px at 85% 5%, rgba(42, 82, 201, .5), transparent 60%),
+        radial-gradient(800px 500px at 0% 100%, rgba(217, 182, 111, .14), transparent 60%),
+        linear-gradient(160deg, var(--navy-800), var(--navy-900));
+    }
+
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(70px);
+      opacity: .5;
+      animation: drift 14s ease-in-out infinite;
+    }
+
+    .orb.one { width: 320px; height: 320px; background: #2a52c9; top: -80px; left: -60px; }
+    .orb.two { width: 260px; height: 260px; background: var(--gold); bottom: -90px; right: 20%; opacity: .22; animation-delay: -6s; }
+
+    @keyframes drift {
+      0%, 100% { translate: 0 0; }
+      50% { translate: 40px 30px; }
+    }
+
+    .hero .wrap {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 60px;
+      align-items: center;
+    }
+
+    .hero .wrap > * { min-width: 0; }
+
+    .eyebrow {
+      font-family: var(--script);
+      font-size: 1.9rem;
+      color: var(--gold);
+    }
+
+    .hero h1 {
+      margin: .1em 0 .35em;
+      font-family: var(--serif);
+      font-size: clamp(2.8rem, 7vw, 5.6rem);
+      line-height: 1.02;
+      color: #fff;
+    }
+
+    .hero h1 em {
+      display: block;
+      color: var(--gold);
+      font-style: italic;
+      font-weight: 500;
+    }
+
+    .lead {
+      max-width: 540px;
+      margin: 0 0 34px;
+      color: rgba(245, 239, 227, .78);
+      font-weight: 300;
+      font-size: 1.15rem;
+    }
+
+    .cta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .stats {
+      display: flex;
+      gap: 48px;
+      margin-top: 52px;
+      padding-top: 28px;
+      border-top: 1px solid rgba(217, 182, 111, .25);
+    }
+
+    .stats strong {
+      display: block;
+      font-family: var(--serif);
+      font-size: 2.6rem;
+      line-height: 1;
+      color: var(--gold);
+    }
+
+    .stats span {
+      font-size: .8rem;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: rgba(245, 239, 227, .65);
+    }
+
+    /* Hero collage */
+    .collage {
+      position: relative;
+      width: 100%;
+      max-width: 440px;
+      height: 580px;
+      margin-inline: auto;
+    }
+
+    .arch {
+      position: absolute;
+      inset: 0 36px 24px 36px;
+      padding: 12px;
+      border: 2px solid var(--gold);
+      border-radius: 50% 50% 16px 16px / 30% 30% 16px 16px;
+      background: linear-gradient(160deg, rgba(217, 182, 111, .25), rgba(217, 182, 111, .04));
+      box-shadow: 0 40px 80px -30px rgba(0, 0, 0, .8);
+    }
+
+    .arch img {
+      display: block;
       width: 100%;
       height: 100%;
+      object-fit: cover;
+      border-radius: 50% 50% 8px 8px / 30% 30% 8px 8px;
+    }
+
+    .tag {
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      translate: -50% 0;
+      padding: 9px 24px;
+      border-radius: 999px;
+      background: var(--gold);
+      color: var(--navy-900);
+      font-size: .78rem;
+      font-weight: 600;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .mini {
+      position: absolute;
+      width: 138px;
+      padding: 8px;
+      background: #fff;
+      border-radius: 3px;
+      box-shadow: 0 24px 44px rgba(0, 0, 0, .5);
+      animation: float 7s ease-in-out infinite;
+    }
+
+    .mini img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 4 / 5;
+      object-fit: cover;
+    }
+
+    .mini.a { left: -6px; bottom: 90px; rotate: -8deg; }
+    .mini.b { right: -6px; top: 60px; rotate: 7deg; animation-delay: -3s; }
+
+    @keyframes float {
+      0%, 100% { translate: 0 0; }
+      50% { translate: 0 -14px; }
+    }
+
+    .scroll-cue {
+      position: absolute;
+      left: 50%;
+      bottom: 26px;
+      z-index: 2;
+      translate: -50% 0;
+      color: var(--gold);
+      font-size: 1.2rem;
+      animation: bob 2s ease-in-out infinite;
+    }
+
+    @keyframes bob {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(8px); }
+    }
+
+    /* ---------- Marquee ---------- */
+    .marquee {
+      overflow: hidden;
+      white-space: nowrap;
+      padding: 15px 0;
+      background: var(--gold);
+      color: var(--navy-900);
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: 1.3rem;
+    }
+
+    .track {
+      display: inline-block;
+      animation: slide 32s linear infinite;
+    }
+
+    .track span { padding-right: 46px; }
+    .track b { padding-left: 46px; font-style: normal; }
+
+    @keyframes slide {
+      to { transform: translateX(-50%); }
+    }
+
+    /* ---------- Quote ---------- */
+    .quote {
+      position: relative;
+      padding: var(--section-pad) 0;
+      text-align: center;
+      background:
+        radial-gradient(700px 300px at 50% 0%, rgba(42, 82, 201, .3), transparent 70%),
+        var(--navy-900);
+    }
+
+    .quote i {
+      font-size: 2.4rem;
+      color: var(--gold);
+      opacity: .7;
+    }
+
+    .quote blockquote {
+      max-width: 860px;
+      margin: 22px auto 24px;
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: clamp(1.25rem, 3vw, 2.1rem);
+      line-height: 1.5;
+      color: #fff;
+    }
+
+    .quote cite {
+      font-style: normal;
+      font-size: .85rem;
+      letter-spacing: .24em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    /* ---------- Featured artwork ---------- */
+    .feature {
+      padding: var(--section-pad) 0;
+      background: linear-gradient(180deg, var(--navy-900), var(--navy-800));
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: .8fr 1.2fr;
+      gap: 70px;
+      align-items: center;
+    }
+
+    .feature-grid > * { min-width: 0; }
+
+    .f-frame {
+      width: 100%;
+      max-width: 420px;
+      margin-inline: auto;
+      padding: 14px;
+      background: #fff;
+      box-shadow: 0 40px 70px -30px rgba(0, 0, 0, .8);
+      rotate: -2deg;
+      transition: rotate .5s;
+    }
+
+    .f-frame:hover { rotate: 0deg; }
+
+    .f-frame img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 4 / 5;
+      object-fit: cover;
+      object-position: center 30%;
+    }
+
+    .feature .kicker { color: var(--gold); }
+
+    .feature h2 {
+      margin: .1em 0 .1em;
+      font-family: var(--serif);
+      font-size: clamp(2rem, 4.5vw, 3.2rem);
+      line-height: 1.1;
+      color: #fff;
+    }
+
+    .f-by {
+      margin: 0 0 18px;
+      color: var(--gold);
+      font-style: italic;
+    }
+
+    .feature p.f-text {
+      margin: 0 0 30px;
+      color: rgba(245, 239, 227, .78);
+      font-weight: 300;
+    }
+
+    /* ---------- Section headings ---------- */
+    .section-head {
+      max-width: 720px;
+      margin: 0 auto 48px;
+      text-align: center;
+    }
+
+    .kicker {
+      font-family: var(--script);
+      font-size: 1.7rem;
+      color: var(--gold-deep);
+    }
+
+    .section-head h2 {
+      margin: .1em 0 .3em;
+      font-family: var(--serif);
+      font-size: clamp(2rem, 5vw, 3.6rem);
+      line-height: 1.1;
+    }
+
+    .section-head p { margin: 0; color: var(--muted); }
+
+    .orn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      margin: 18px 0 20px;
+      color: var(--gold-deep);
+    }
+
+    .orn::before,
+    .orn::after {
+      content: "";
+      width: 90px;
+      height: 1px;
+      background: currentColor;
+      opacity: .6;
+    }
+
+    .dark .kicker { color: var(--gold); }
+    .dark .section-head h2 { color: #fff; }
+    .dark .section-head p { color: rgba(245, 239, 227, .7); }
+    .dark .orn { color: var(--gold); }
+
+    /* ---------- Gallery ---------- */
+    .inner.gallery {
+      background:
+        radial-gradient(900px 400px at 50% 0%, #fffaf0, transparent 70%),
+        var(--cream);
+      color: var(--ink);
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+
+    .search {
+      position: relative;
+      flex: 1 1 260px;
+      max-width: 420px;
+    }
+
+    .search i {
+      position: absolute;
+      top: 50%;
+      left: 18px;
+      translate: 0 -50%;
+      color: var(--gold-deep);
+    }
+
+    .search input,
+    .sort {
+      width: 100%;
+      height: 46px;
+      border: 1px solid var(--gold-deep);
+      border-radius: 999px;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+      font-size: .95rem;
+    }
+
+    .search input { padding: 0 18px 0 46px; }
+
+    .sort {
+      width: auto;
+      min-width: 190px;
+      padding: 0 18px;
+      cursor: pointer;
+    }
+
+    /* Filter chips */
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin: 0 auto 18px;
+    }
+
+    .chip {
+      height: 42px;
+      padding: 0 22px;
+      border: 1px solid var(--gold-deep);
+      border-radius: 999px;
+      background: transparent;
+      color: var(--ink);
+      font-family: var(--sans);
+      font-size: .8rem;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: background .3s, color .3s, transform .3s;
+    }
+
+    .chip:hover { transform: translateY(-2px); background: rgba(184, 138, 58, .12); }
+
+    .chip.active {
+      background: var(--navy-800);
+      border-color: var(--navy-800);
+      color: var(--gold);
+    }
+
+    .chip .heart { color: #e0566b; }
+
+    .count {
+      margin: 0 0 40px;
+      text-align: center;
+      font-size: .92rem;
+      color: var(--muted);
+    }
+
+    .empty {
+      max-width: 460px;
+      margin: 20px auto 0;
+      text-align: center;
+      font-family: var(--serif);
+      font-size: 1.3rem;
+      color: var(--muted);
+    }
+
+    /* Pantay na grid */
+    .masonry {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 44px 36px;
+    }
+
+    .piece {
+      position: relative;
+      width: calc((100% - 72px) / 3);
+    }
+
+    .open {
+      display: block;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      background: none;
+      font: inherit;
+      color: inherit;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .frame {
+      display: block;
+      padding: 14px;
+      background: #fff;
+      box-shadow: 0 18px 40px -18px rgba(10, 21, 53, .5), 0 0 0 1px rgba(10, 21, 53, .06);
+      transition: transform .45s, box-shadow .45s;
+    }
+
+    .imgwrap {
+      position: relative;
+      display: block;
+      overflow: hidden;
+      aspect-ratio: 4 / 5;
+    }
+
+    .imgwrap img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 30%;
+      transition: transform .9s;
+    }
+
+    .shade {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 22px;
+      background: linear-gradient(to top, rgba(6, 13, 36, .85), transparent 60%);
+      color: #fff;
+      font-size: .78rem;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      opacity: 0;
+      transition: opacity .4s;
+    }
+
+    .piece:hover .frame,
+    .open:focus-visible .frame {
+      transform: translateY(-8px);
+      box-shadow: 0 34px 60px -22px rgba(10, 21, 53, .6), 0 0 0 1px rgba(184, 138, 58, .5);
+    }
+
+    .piece:hover img,
+    .open:focus-visible img { transform: scale(1.07); }
+
+    .piece:hover .shade,
+    .open:focus-visible .shade { opacity: 1; }
+
+    /* Heart button */
+    .fav {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      z-index: 3;
+      display: grid;
+      place-items: center;
+      width: 44px;
+      height: 44px;
+      border: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, .94);
+      box-shadow: 0 6px 18px rgba(6, 13, 36, .3);
+      color: var(--gold-deep);
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: transform .3s, background .3s, color .3s;
+    }
+
+    .fav:hover { transform: scale(1.1); }
+
+    .fav.on {
+      background: var(--navy-800);
+      color: #ff7b8a;
+    }
+
+    .placard {
+      display: block;
+      min-height: 110px;
+      padding: 18px 6px 0;
+    }
+
+    .placard .no {
+      display: block;
+      font-size: .74rem;
+      letter-spacing: .26em;
+      text-transform: uppercase;
+      color: var(--gold-deep);
+    }
+
+    .placard .name {
+      display: block;
+      margin: 2px 0;
+      font-family: var(--serif);
+      font-size: clamp(1.25rem, 2vw, 1.5rem);
+      line-height: 1.2;
+    }
+
+    .placard .by {
+      display: block;
+      color: var(--muted);
+      font-size: .98rem;
+    }
+
+    /* ---------- Artists ---------- */
+    .artist-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 26px;
+    }
+
+    .a-card {
       display: flex;
       flex-direction: column;
-      justify-content: flex-end;
-      background: rgba(0, 0, 0, 0.7);
-      color: #fff;
-      padding: 10px;
-      opacity: 0;
-      transition: opacity 0.3s ease-in-out;
-      
-    }
-
-    .art-item:hover .art-overlay {
-      opacity: 1;
-    }
-
-    .art-overlay h5,
-    .art-overlay p {
-      margin: 0;
-      
-    }
-
-    #gallery {
+      align-items: center;
+      width: calc((100% - 52px) / 3);
+      padding: 36px 20px 28px;
+      border: 1px solid rgba(217, 182, 111, .3);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, .03);
       text-align: center;
+      transition: transform .35s, border-color .35s, background .35s;
     }
 
-
-    #gallery, #about, #contact {
-      font-weight: bold; 
-      color: #fff;
-      font-family: 'Roboto', sans-serif;
-      margin: 20px;
-      margin-bottom: 20px;
-    }
-    
-    #about, #contact {
-        text-align: center;
+    .a-card:hover {
+      transform: translateY(-8px);
+      border-color: var(--gold);
+      background: rgba(217, 182, 111, .08);
     }
 
-  .gallery-item {
-    position: relative;
-    overflow: hidden;
-    display: inline-block;
-  }
-
-  .gallery-item img {
-     transition: transform 0.3s ease-in-out;
-  }
-
-  .overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0;
-    background-color: rgba(255, 255, 255, 0.7); 
-    pointer-events: none; 
-    transition: opacity 0.3s ease-in-out;
-  }
-
-  .gallery-item:hover img,
-  .gallery-item.clicked img {
-    transform: scale(1.2); 
-  }
-
-  .gallery-item:hover .overlay,
-  .gallery-item.clicked .overlay {
-    opacity: 1;
-  }
-
-    nav {
-      background-color: #031d74; 
-      height: 70px;
-    }
-
-    .nav-wrapper {
-      width: 90%; 
-      margin: 0 auto;
-    }
-
-    nav a {
-      color: #fff;
-    }
-
-    nav a.brand-logo {
-      font-size: 2.5rem;
-      color: rgb(253, 239, 239);
-      font-family: 'Roboto', sans-serif; 
-      font-weight: bold;
-    }
-
-    .content-section {
-      display: none; 
-    }
-
-    .art-item {
-      position: relative;
-      overflow: hidden;
-      margin-bottom: 20px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      transition: box-shadow 0.3s ease-in-out;
-    }
-
-    .art-item:hover {
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    }
-
-    .art-item img {
-      width: 100%;
-      height: auto;
-      transition: transform 0.3s ease-in-out;
-    }
-
-    .art-item:hover img {
-      transform: scale(1.1);
-    }
-
-    .art-overlay {
-      position: absolute;
-      bottom: -100%;
-      left: 0;
-      width: 100%;
-      background: rgba(236, 224, 224, 0.982);
-      color: #fff;
-      padding: 10px;
-      opacity: 0;
-      transition: opacity 0.3s ease-in-out, bottom 0.3s ease-in-out;
-    }
-
-    .art-item:hover .art-overlay {
-      opacity: 1;
-      bottom: 0;
-    }
-
-    nav {
-      background-color: rgb(255, 245, 245) 89, 89;
-    }
-
-    .nav-wrapper {
-      width: 90%;
-      margin: 0 auto;
-    }
-
-    nav a {
-      color: #fff;
-    }
-
-    nav a.brand-logo {
-      font-size: 1.5rem;
-    }
-
-    nav a i {
-      color: #fff !important;
-    }
-  
-    .content-section {
-      display: none;
-    }
-
-    #home {
-      text-align: center;
-      padding-top: 50px;
-      display: block;
-      color: rgb(248, 238, 238) 60, 60;
-    }
-
-    #home h1 {
-      font-size: 3.5rem;
-      margin-bottom: 20px;
-      color: rgb(253, 239, 239);
-      font-family: 'Roboto', sans-serif; 
-      font-weight: bold;
-      
-    }
-
-    #home p {
-      font-size: 1.5rem;
-      margin-bottom: 40px;
-      color: rgb(253, 239, 239);
-      font-family: 'Roboto', sans-serif;
-      font-weight: bold;
-      
-    }
-
-    #home img {
+    .avatar {
+      display: grid;
+      place-items: center;
+      flex: none;
+      width: 86px;
+      height: 86px;
+      margin: 0 auto 18px;
+      border: 2px solid var(--gold);
       border-radius: 50%;
-      width: 250px;
-      height: 250px;
-      object-fit: cover;
+      background: linear-gradient(145deg, var(--navy-700), var(--navy-800));
+      box-shadow: 0 0 0 6px rgba(217, 182, 111, .12);
+      font-family: var(--serif);
+      font-size: 1.9rem;
+      color: var(--gold);
+    }
+
+    .a-card h3 {
+      width: 100%;
+      margin: 0 0 4px;
+      overflow: hidden;
+      font-family: var(--serif);
+      font-size: clamp(1.05rem, 1.7vw, 1.3rem);
+      line-height: 1.3;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      color: #fff;
+    }
+
+    .a-card p {
+      margin: 0 0 16px;
+      font-size: .8rem;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: rgba(245, 239, 227, .65);
+    }
+
+    .thumbs {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      height: 56px;
       margin-bottom: 20px;
+    }
+
+    .thumbs img {
+      width: 44px;
+      height: 56px;
+      border: 1px solid rgba(217, 182, 111, .5);
+      border-radius: 6px;
+      object-fit: cover;
+    }
+
+    .a-actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      margin-top: auto;
+    }
+
+    .a-actions .view {
+      flex: 1;
+      max-width: 190px;
+      height: 44px;
+      padding: 0 20px;
+      border: 1px solid var(--gold);
+      border-radius: 999px;
+      background: transparent;
+      color: var(--gold);
+      font-family: var(--sans);
+      font-size: .74rem;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: background .3s, color .3s;
+    }
+
+    .a-actions .fb {
+      display: grid;
+      flex: none;
+      place-items: center;
+      width: 44px;
+      height: 44px;
+      border: 1px solid rgba(217, 182, 111, .5);
+      border-radius: 50%;
+      color: var(--gold);
+      text-decoration: none;
+      transition: background .3s, color .3s;
+    }
+
+    .a-actions .view:hover,
+    .a-actions .fb:hover {
+      background: var(--gold);
+      color: var(--navy-900);
+    }
+
+    /* ---------- Moments ---------- */
+    .polaroids {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 40px 30px;
+      padding: 10px 0;
+    }
+
+    .polaroid {
+      display: block;
+      padding: 0;
+      border: 0;
+      background: none;
+      font: inherit;
+      color: inherit;
+      cursor: pointer;
+    }
+
+    .pol-card {
+      display: block;
+      padding: 12px 12px 0;
+      background: #fff;
+      box-shadow: 0 24px 44px -18px rgba(0, 0, 0, .7);
+      transition: rotate .4s, translate .4s;
+    }
+
+    .polaroid:nth-child(odd) .pol-card { rotate: -2deg; }
+    .polaroid:nth-child(even) .pol-card { rotate: 2deg; }
+
+    .polaroid:hover .pol-card,
+    .polaroid:focus-visible .pol-card {
+      rotate: 0deg;
+      translate: 0 -8px;
+    }
+
+    .pol-card img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+    }
+
+    .pol-cap {
+      display: block;
+      padding: 14px 6px 16px;
+      font-family: var(--script);
+      font-size: 1.7rem;
+      line-height: 1.2;
+      color: var(--navy-800);
+    }
+
+    /* ---------- About ---------- */
+    .about-grid {
+      display: grid;
+      grid-template-columns: .9fr 1.1fr;
+      gap: 80px;
+      align-items: center;
+    }
+
+    .about-grid > * { min-width: 0; }
+
+    .stack {
+      position: relative;
+      height: 520px;
+    }
+
+    .stack figure {
+      position: absolute;
+      margin: 0;
       padding: 10px;
-    }
-    
-
-    #social-icons {
-        text-align: center;
-      margin-top: 20px;
-      margin-bottom: 50px;
+      background: #fff;
+      border-radius: 3px;
+      box-shadow: 0 30px 50px -20px rgba(0, 0, 0, .7);
+      transition: transform .5s;
     }
 
-    #social-icons a {
-      display: inline-block;
-      size: 10rem;
-      margin: 0 40px;
-      color: rgb(18, 18, 255);
-
+    .stack img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
- 
+
+    .stack .s1 { width: 58%; height: 300px; top: 0; left: 0; rotate: -5deg; }
+    .stack .s2 { width: 52%; height: 280px; top: 90px; right: 0; rotate: 6deg; z-index: 2; }
+    .stack .s3 { width: 50%; height: 260px; bottom: 0; left: 14%; rotate: -2deg; z-index: 3; }
+
+    .stack:hover .s1 { transform: translate(-10px, -8px); }
+    .stack:hover .s2 { transform: translate(10px, 0); }
+    .stack:hover .s3 { transform: translate(0, 10px); }
+
+    .about h2 {
+      margin: .1em 0 .4em;
+      font-family: var(--serif);
+      font-size: clamp(2rem, 4.5vw, 3.4rem);
+      line-height: 1.1;
+      color: #fff;
+    }
+
+    .about .kicker { color: var(--gold); }
+
+    .about p {
+      color: rgba(245, 239, 227, .78);
+      font-weight: 300;
+    }
+
+    .values {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-top: 34px;
+    }
+
+    .value {
+      padding: 22px 18px;
+      border: 1px solid rgba(217, 182, 111, .3);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, .03);
+      text-align: center;
+      transition: transform .3s, background .3s;
+    }
+
+    .value:hover {
+      transform: translateY(-6px);
+      background: rgba(217, 182, 111, .1);
+    }
+
+    .value i {
+      margin-bottom: 8px;
+      font-size: 1.5rem;
+      color: var(--gold);
+    }
+
+    .value h3 {
+      margin: 0;
+      font-family: var(--serif);
+      font-size: 1.15rem;
+      color: #fff;
+    }
+
+    /* ---------- Contact ---------- */
+    .contact { text-align: center; }
+
+    .contact .intro {
+      max-width: 620px;
+      margin: 0 auto 56px;
+      color: rgba(245, 239, 227, .75);
+      font-weight: 300;
+    }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 26px;
+    }
+
+    .c-card {
+      display: block;
+      padding: 40px 22px;
+      border: 1px solid rgba(217, 182, 111, .3);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, .03);
+      text-decoration: none;
+      transition: transform .35s, border-color .35s, background .35s;
+    }
+
+    a.c-card:hover {
+      transform: translateY(-8px);
+      border-color: var(--gold);
+      background: rgba(217, 182, 111, .08);
+    }
+
+    .c-card > i {
+      margin-bottom: 14px;
+      font-size: 1.8rem;
+      color: var(--gold);
+    }
+
+    .c-card h3 {
+      margin: 0 0 6px;
+      font-family: var(--serif);
+      font-size: 1.4rem;
+      color: #fff;
+    }
+
+    .c-card p {
+      margin: 0;
+      word-break: break-word;
+      color: rgba(245, 239, 227, .75);
+    }
+
+    .socials {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .socials a {
+      display: grid;
+      place-items: center;
+      width: 46px;
+      height: 46px;
+      border: 1px solid var(--gold);
+      border-radius: 50%;
+      color: var(--gold);
+      font-size: 1.15rem;
+      transition: background .3s, color .3s, transform .3s;
+    }
+
+    .socials a:hover {
+      transform: translateY(-4px);
+      background: var(--gold);
+      color: var(--navy-900);
+    }
+
+    .contact-split {
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 50px;
+      margin-top: 70px;
+      text-align: left;
+    }
+
+    .contact-split > * { min-width: 0; }
+
+    .split-title {
+      margin: 0 0 22px;
+      font-family: var(--serif);
+      font-size: 1.8rem;
+      color: #fff;
+    }
+
+    .field { margin-bottom: 18px; }
+
+    .field label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: .78rem;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      padding: 14px 18px;
+      border: 1px solid rgba(217, 182, 111, .35);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, .05);
+      color: var(--cream);
+      font: inherit;
+      font-size: 1rem;
+    }
+
+    .field select option { color: #14182b; }
+
+    .field textarea {
+      min-height: 140px;
+      resize: vertical;
+    }
+
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      border-color: var(--gold);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(217, 182, 111, .2);
+    }
+
+    .form .btn {
+      width: 100%;
+      height: 52px;
+    }
+
+    .form-note {
+      min-height: 1.6em;
+      margin: 12px 0 0;
+      font-size: .92rem;
+      color: var(--gold-soft);
+    }
+
+    details {
+      margin-bottom: 14px;
+      padding: 0 22px;
+      border: 1px solid rgba(217, 182, 111, .3);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, .03);
+    }
+
+    summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 18px 0;
+      list-style: none;
+      cursor: pointer;
+      font-family: var(--serif);
+      font-size: 1.12rem;
+      color: #fff;
+    }
+
+    summary::-webkit-details-marker { display: none; }
+
+    summary::after {
+      content: "+";
+      flex: none;
+      font-size: 1.6rem;
+      line-height: 1;
+      color: var(--gold);
+      transition: transform .3s;
+    }
+
+    details[open] summary::after { transform: rotate(45deg); }
+
+    details p {
+      margin: 0 0 18px;
+      color: rgba(245, 239, 227, .75);
+      font-weight: 300;
+    }
+
+    /* ---------- Footer ---------- */
     footer {
-        color: #fff3f3;
-        font-weight: bold;
-        font-family: 'Roboto', sans-serif;
-        text-align: center;
+      padding: 40px 0 34px;
+      text-align: center;
+      border-top: 1px solid rgba(217, 182, 111, .2);
+      background: #040a1c;
+      font-size: .9rem;
+      color: rgba(245, 239, 227, .6);
     }
 
-    footer.page-footer {
-        background-color: rgb(15, 3, 102); 
-        margin-top: auto;
-        z-index: 1;
-    }
-    footer {
-        background-image: url();
-        background-color: #c4aeae; 
+    footer strong {
+      font-family: var(--serif);
+      font-size: 1.3rem;
+      color: var(--gold);
     }
 
-    footer h5,
-    footer p {
-      color: #fff3f3;
-      
+    .f-links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px 26px;
+      margin: 14px 0 18px;
+      padding: 0;
+      list-style: none;
     }
 
+    .f-links a {
+      font-size: .78rem;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: rgba(245, 239, 227, .75);
+      transition: color .3s;
+    }
+
+    .f-links a:hover { color: var(--gold); }
+
+    /* ---------- Back to top + toast ---------- */
+    .to-top {
+      position: fixed;
+      right: 26px;
+      bottom: 26px;
+      z-index: 40;
+      display: grid;
+      place-items: center;
+      width: 50px;
+      height: 50px;
+      border: 1px solid var(--gold);
+      border-radius: 50%;
+      background: rgba(6, 13, 36, .85);
+      color: var(--gold);
+      font-size: 1.1rem;
+      cursor: pointer;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(14px);
+      transition: opacity .3s, visibility .3s, transform .3s, background .3s, color .3s;
+    }
+
+    .to-top.show {
+      opacity: 1;
+      visibility: visible;
+      transform: none;
+    }
+
+    .to-top:hover {
+      background: var(--gold);
+      color: var(--navy-900);
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 28px;
+      z-index: 130;
+      translate: -50% 20px;
+      max-width: 90vw;
+      padding: 12px 24px;
+      border: 1px solid var(--gold);
+      border-radius: 999px;
+      background: var(--navy-800);
+      color: var(--cream);
+      font-size: .9rem;
+      text-align: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .3s, translate .3s;
+    }
+
+    .toast.show {
+      opacity: 1;
+      translate: -50% 0;
+    }
+
+    /* ---------- Lightbox (pantay na laki) ---------- */
+    .lightbox {
+      --lb-h: min(84vh, 680px);
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      background: rgba(4, 9, 26, .94);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity .3s, visibility .3s;
+    }
+
+    .lightbox.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .lb-body {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      grid-template-rows: minmax(0, 1fr);
+      width: min(1060px, calc(100vw - 180px));
+      height: var(--lb-h);
+      overflow: hidden;
+      border: 1px solid rgba(217, 182, 111, .35);
+      border-radius: 14px;
+      background: var(--navy-800);
+      box-shadow: 0 40px 80px rgba(0, 0, 0, .6);
+      transform: scale(.96);
+      transition: transform .35s;
+    }
+
+    .lightbox.open .lb-body { transform: scale(1); }
+
+    .lb-img {
+      display: grid;
+      place-items: center;
+      min-width: 0;
+      min-height: 0;
+      padding: 24px;
+      background: #02061a;
+    }
+
+    .lb-frame {
+      width: auto;
+      max-width: 100%;
+      height: calc(var(--lb-h) - 48px);
+      aspect-ratio: 4 / 5;
+      padding: 14px;
+      background: #fff;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, .6);
+    }
+
+    .lb-frame img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .lb-info {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      min-height: 0;
+      padding: 38px 36px 30px;
+    }
+
+    .lb-scroll {
+      flex: 1;
+      min-height: 0;
+      padding-right: 6px;
+      overflow-y: auto;
+    }
+
+    .lb-no {
+      font-size: .78rem;
+      letter-spacing: .26em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    .lb-info h3 {
+      margin: .2em 0 .1em;
+      font-family: var(--serif);
+      font-size: clamp(1.6rem, 2.6vw, 2.1rem);
+      line-height: 1.15;
+      color: #fff;
+    }
+
+    .lb-artist {
+      margin: 0 0 18px;
+      color: var(--gold);
+      font-style: italic;
+    }
+
+    .lb-text {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 300;
+      color: rgba(245, 239, 227, .8);
+    }
+
+    .lb-foot {
+      flex: none;
+      margin-top: 18px;
+      padding-top: 22px;
+      border-top: 1px solid rgba(217, 182, 111, .25);
+    }
+
+    .lb-foot .btn {
+      width: 100%;
+      height: 52px;
+    }
+
+    .lb-close,
+    .lb-play,
+    .lb-nav {
+      position: absolute;
+      z-index: 2;
+      display: grid;
+      place-items: center;
+      width: 50px;
+      height: 50px;
+      border: 1px solid rgba(217, 182, 111, .5);
+      border-radius: 50%;
+      background: rgba(6, 13, 36, .7);
+      color: var(--gold);
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: background .3s, color .3s;
+    }
+
+    .lb-close:hover,
+    .lb-play:hover,
+    .lb-nav:hover {
+      background: var(--gold);
+      color: var(--navy-900);
+    }
+
+    .lb-close { top: 20px; right: 20px; }
+    .lb-play { top: 20px; right: 84px; font-size: 1rem; }
+    .lb-nav { top: 50%; translate: 0 -50%; }
+    .lb-nav.prev { left: 20px; }
+    .lb-nav.next { right: 20px; }
+
+    /* ---------- Reveal animation ---------- */
+    .js .reveal {
+      opacity: 0;
+      translate: 0 34px;
+      transition: opacity .9s ease, translate .9s ease;
+      transition-delay: var(--d, 0ms);
+    }
+
+    .js .reveal.in {
+      opacity: 1;
+      translate: 0 0;
+    }
+
+    /* ---------- Responsive ---------- */
+    @media (max-width: 1060px) {
+      .burger { display: block; }
+
+      .menu {
+        position: fixed;
+        inset: 0 0 0 auto;
+        flex-direction: column;
+        gap: 24px;
+        width: min(80vw, 320px);
+        padding: 100px 36px;
+        background: var(--navy-800);
+        box-shadow: -20px 0 60px rgba(0, 0, 0, .5);
+        transform: translateX(105%);
+        visibility: hidden;
+        transition: transform .4s, visibility .4s;
+      }
+
+      .menu.open {
+        transform: none;
+        visibility: visible;
+      }
+    }
+
+    @media (max-width: 960px) {
+      .hero .wrap,
+      .about-grid,
+      .feature-grid,
+      .contact-split { grid-template-columns: 1fr; gap: 50px; }
+
+      .hero { text-align: center; }
+      .lead { margin-inline: auto; }
+      .cta,
+      .stats { justify-content: center; }
+      .collage { height: 500px; max-width: 380px; }
+      .stack { max-width: 460px; margin-inline: auto; width: 100%; }
+      .contact-grid { grid-template-columns: 1fr; max-width: 520px; margin-inline: auto; }
+      .feature-grid { text-align: center; }
+      .feature .cta { justify-content: center; }
+      .contact-split { margin-top: 50px; }
+
+      .piece { width: calc((100% - 36px) / 2); }
+      .a-card { width: calc((100% - 26px) / 2); }
+
+      /* Lightbox sa tablet at phone */
+      .lightbox { padding: 70px 14px 90px; }
+
+      .lb-body {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+        width: 100%;
+        max-width: 560px;
+        height: auto;
+        max-height: calc(100vh - 160px);
+        max-height: calc(100dvh - 160px);
+        overflow-y: auto;
+      }
+
+      .lb-img { padding: 18px; }
+      .lb-frame { height: min(46vh, 420px); }
+      .lb-info { padding: 24px 22px 26px; }
+      .lb-scroll { overflow: visible; padding-right: 0; }
+
+      .lb-close { top: 14px; right: 14px; width: 46px; height: 46px; }
+      .lb-play { top: 14px; right: 68px; width: 46px; height: 46px; }
+
+      .lb-nav {
+        top: auto;
+        bottom: 20px;
+        translate: 0 0;
+        width: 48px;
+        height: 48px;
+      }
+
+      .lb-nav.prev { left: calc(50% - 62px); }
+      .lb-nav.next { right: calc(50% - 62px); }
+    }
+
+    @media (max-width: 600px) {
+      .piece,
+      .a-card { width: 100%; }
+
+      .inner { padding-top: 110px; }
+      .toolbar { flex-direction: column; align-items: stretch; }
+      .search { max-width: none; flex-basis: auto; }
+      .sort { width: 100%; }
+      .count { margin-bottom: 30px; }
+      .chip { height: 38px; padding: 0 16px; font-size: .74rem; }
+
+      .values { grid-template-columns: 1fr; }
+      .stats { gap: 30px; }
+      .stats strong { font-size: 2.2rem; }
+      .eyebrow { font-size: 1.6rem; }
+      .btn { width: 100%; padding: 0 20px; }
+      .collage { height: 440px; }
+      .mini { width: 100px; }
+      .stack { height: 440px; }
+      .stack .s1 { height: 240px; }
+      .stack .s2 { height: 230px; }
+      .stack .s3 { height: 210px; }
+      .brand { font-size: 1.3rem; }
+      .to-top { right: 16px; bottom: 16px; width: 46px; height: 46px; }
+      .orn::before,
+      .orn::after { width: 50px; }
+      .polaroids { grid-template-columns: repeat(2, 1fr); gap: 28px 16px; }
+      .pol-cap { font-size: 1.35rem; }
+      .split-title { font-size: 1.5rem; }
+    }
+
+    @media (max-width: 380px) {
+      .collage { height: 400px; }
+      .mini { width: 84px; }
+      .tag { font-size: .7rem; padding: 8px 18px; }
+      .polaroids { grid-template-columns: 1fr; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation: none !important;
+        transition: none !important;
+        scroll-behavior: auto !important;
+      }
+
+      .js .reveal { opacity: 1; translate: 0 0; }
+    }
   </style>
 </head>
 <body>
 
-  <nav>
-    <div class="nav-wrapper">
-      <a href="#" class="fas fa-paint-brush painter-icon"></a>AlyArt Gallery</a>
-      <a href="#" class="sidenav-trigger" data-target="mobile-menu">
-        <i class="fas fa-bars"></i>
-      </a>
-      <ul class="sidenav grey lighten-2" id="mobile-menu">
-        <li><a href="#" onclick="showSection('home')">Home</a></li>
-        <li><a href="#" onclick="showSection('gallery')">Gallery</a></li>
-        <li><a href="#" onclick="showSection('about')">About</a></li>
-        <li><a href="#" onclick="showSection('contact')">Contact Us</a></li>
-      </ul>
-      <ul id="nav-mobile" class="right hide-on-med-and-down">
-        <li><a href="#home" onclick="showSection('home')">Home</a></li>
-        <li><a href="#gallery" onclick="showSection('gallery')">Gallery</a></li>
-        <li><a href="#about" onclick="showSection('about')">About</a></li>
-        <li><a href="#contact" onclick="showSection('contact')">Contact</a></li>
+  <div class="progress" id="progress"></div>
+
+  <!-- NAVIGATION -->
+  <header class="nav" id="nav">
+    <div class="wrap">
+      <a href="#home" class="brand"><i class="fas fa-paint-brush"></i><span>AlyArt <em>Gallery</em></span></a>
+      <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false"><i class="fas fa-bars"></i></button>
+      <ul class="menu" id="menu">
+        <li><a href="#home" data-page="home" class="active">Home</a></li>
+        <li><a href="#gallery" data-page="gallery">Gallery</a></li>
+        <li><a href="#artists" data-page="artists">Artists</a></li>
+        <li><a href="#moments" data-page="moments">Moments</a></li>
+        <li><a href="#about" data-page="about">About</a></li>
+        <li><a href="#contact" data-page="contact">Contact</a></li>
       </ul>
     </div>
-  </nav>
+  </header>
 
-    <div class="container">
-    <section id="home" class="content-section">
-       <h1>Welcome to  AlyArt Gallery</h1>
-       <p>Explore a collection of beautiful artworks that captivate the soul and stir the imagination. Our gallery showcases a diverse array of artistic expressions, from traditional paintings to modern digital art.</p>
+  <main>
 
-   
-       <img src="img/aly.jpg" alt="me">
-       <p>This is Aly, welcoming you in the world of art!</p>
-       <p>“The one thing that you have that nobody else has is you. Your voice, your mind, your story, your vision. So write and draw and build and play and dance and live only as you can.” – Neil Gaiman</p>
-       
-    </section>
+    <!-- ================= HOME ================= -->
+    <div class="page active" id="home">
+      <section class="hero">
+        <div class="orb one"></div>
+        <div class="orb two"></div>
 
-    <div id="social-icons">
-        <a href="https://www.facebook.com/LiesLoveLyss" class="btn-floating btn-small indigo darken-4" target="_blank" alt="Facebook">
-            <i class="fab fa-facebook"></i></a>
-        <a href="https://twitter.com/Lys12258137" class="btn-floating btn-small indigo darken-4" target="_blank" alt="Twitter">
-            <i class="fab fa-twitter"></i></a>
-        <a href=https://instagram.com/lieslovelys?igshid=M2RkZGJiMzhjOQ=="" class="btn-floating btn-small indigo darken-4" target="_blank"alt="Instagram">
-            <i class="fab fa-instagram"></i></a>
-    </div>
+        <div class="wrap">
+          <div>
+            <div class="eyebrow reveal">Where every stroke tells a story</div>
+            <h1 class="reveal" style="--d:100ms">AlyArt <em>Gallery</em></h1>
+            <p class="lead reveal" style="--d:200ms">Explore a collection of beautiful artworks that captivate the soul and stir the imagination. Our gallery showcases a diverse array of artistic expressions, from traditional paintings to modern digital art.</p>
+            <div class="cta reveal" style="--d:300ms">
+              <a href="#gallery" class="btn btn-gold">Explore the Collection <i class="fas fa-arrow-right"></i></a>
+              <a href="#about" class="btn btn-ghost">About the Gallery</a>
+            </div>
+            <div class="stats reveal" style="--d:400ms">
+              <div><strong id="statArt">0</strong><span>Artworks</span></div>
+              <div><strong id="statArtists">0</strong><span>Artists</span></div>
+            </div>
+          </div>
 
-    <section id="gallery" class="content-section">
-      <h2>Gallery</h2>
-      <h2>Discover the Stunning Artworks in Our Gallery</h2>
-        <p>Step into a world of creativity and beauty. Our gallery features a curated collection of artworks that span various genres and styles. Click on each piece below for a closer look:</p>
-    
-                    <div class="row">
-                        <div class="col s12 l4">
-                            <img src="img/house.jpg" alt="" class="responsive-img materialboxed">
-                        </div>
-                        <div class="col s12 l6 offset-l1">
-                          <h2 class="indigo-text text-darken-4">Madrigal Houses</h2>
-                          <h5>Artwork 1</h5>
-                          <p>Artist: Renz Rainier Pasagdan</p>
-                          <a href="https://www.facebook.com/renz.rainier212" class="btn-floating btn-small indigo darken-4" target="_blank" alt="Facebook">
-                            <i class="fab fa-facebook"></i></a>
-                          <p> The Casita itself is a vibrant and enchanting structure, adorned with colorful patterns and intricate designs. The magic within the house is a central element of the story, as it provides each family member with a special power that contributes to the overall harmony and well-being of the family and the community. The Madrigal house becomes a symbol of the family's unity and the strength that comes from embracing each member's distinctive qualities. The Casita is a magical place filled with love, warmth, and the rich cultural heritage of the Madrigal family.</p>
-                        </div>
-                      </div>
-                      <div class="row">
-                        <div class="col s12 l4 offset-l1 push-l7">
-                            <img src="img/mans.jpg" alt="" class="responsive-img materialboxed">
-                        </div>
-                        <div class="col s12 l6 offset-l1 pull-l5 center-align">
-                          <h2 class="indigo-text text-darken-4">The Man</h2>
-                          <h5>Arwork 2</h5>
-                          <p>Artist: Sean Denver Smaniego</p>
-                          <a href="https://www.facebook.com/seandenver.alien" class="btn-floating btn-small indigo darken-4" target="_blank" alt="Facebook">
-                            <i class="fab fa-facebook"></i></a>
-                          <p>In this captivating artwork, the stark contrast between the weathered face of an adventurous wanderer, marked by the sun's embrace and lines etched with tales of exploration, converges with the polished countenance of an urban intellectual, radiating intellect and refinement. Through a single gaze, the painting encapsulates the duality of divergent lifestyles—one shaped by the raw allure of nature's unpredictability and the other by the nuanced complexities of urban existence. Together, these faces tell a visual tale of two distinct worlds harmonizing in the canvas of life.</p>
-                        </div>
-                      </div>
-                      <div class="row">
-                        <div class="col s12 l4">
-                            <img src="img/bird.jpg" alt="" class="responsive-img materialboxed">
-                        </div>
-                        <div class="col s12 l6 offset-l1">
-                          <h2 class="indigo-text text-darken-4">Bird</h2>
-                          <h5>Artwork 3</h5>
-                          <p>Artist: Jomar Dindo</p>
-                          <a href="https://www.facebook.com/jomar.dindo.7" class="btn-floating btn-small indigo darken-4" target="_blank" alt="Facebook">
-                            <i class="fab fa-facebook"></i></a>
-                          <p>Celebrating the Breathtaking Avian Wonders of the Philippines From the vibrant plumage of the Philippine Eagle to the melodious songs of the Luzon Bleeding-heart, our archipelago is a haven for unique and endangered bird species. Join us in marveling at the diverse feathered treasures that grace our skies, embodying the rich biodiversity and natural beauty of the Philippines.</p>
-                        </div>
-                      </div>
-                      <div class="row">
-                        <div class="col s12 l4 offset-l1 push-l7">
-                            <img src="img/beauty.jpg" alt="" class="responsive-img materialboxed">
-                        </div>
-                        <div class="col s12 l6 offset-l1 pull-l5 center-align">
-                          <h2 class="indigo-text text-darken-4">The Beauty</h2>
-                          <h5>Artwork 4</h5>
-                          <p>Artist: John Zenn Godani</p>
-                          <a href="https://www.facebook.com/jhonzenn.godani" class="btn-floating btn-small indigo darken-4" target="_blank" alt="Facebook">
-                            <i class="fab fa-facebook"></i></a>
-                          <p>Physical beauty may be reflected in features such as symmetry, clear skin, expressive eyes, and a radiant smile. However, true beauty often transcends these superficial aspects, encompassing a person's unique charm, kindness, and the way they carry themselves. Ultimately, beauty is a dynamic and personal experience, influenced by cultural, societal, and individual perspectives.</p>
-                        </div>
-                      </div>
-                      <div class="row">
-                        <div class="col s12 l4">
-                            <img src="img/checkmate.jpg" alt="" class="responsive-img materialboxed">
-                        </div>
-                        <div class="col s12 l6 offset-l1">
-                          <h2 class="indigo-text text-darken-4">Checkmate</h2>
-                          <h5>Artwork 5</h5>
-                          <p>Artist: John Earl Rance</p>
-                          <a href="https://www.facebook.com/earl.filibustersmo" class="btn-floating btn-small indigo darken-4" target="_blank" alt="Facebook">
-                            <i class="fab fa-facebook"></i></a>
-                          <p>"Checkmate" is a term commonly used in the game of chess when a player's king is in a position to be captured and there is no way to escape, resulting in the end of the game. In the context of love, the concept of "checkmate" can be metaphorically applied to signify a profound and decisive moment in a romantic relationship. It might represent a moment of clarity or realization when two individuals recognize and accept their mutual feelings, leading to a harmonious and conclusive connection. In this metaphorical sense, "checkmate" in love could symbolize the victory of mutual understanding, emotional alignment, and the endearing capture of each other's hearts, marking the triumph of love over uncertainties and hesitations.</p>
-                        </div>
-                      </div>
-                      <div class="row">
-                        <div class="col s12 l4 offset-l1 push-l7">
-                            <img src="img/stephen.jpg" alt="" class="responsive-img materialboxed">
-                        </div>
-                        <div class="col s12 l6 offset-l1 pull-l5 center-align">
-                          <h2 class="indigo-text text-darken-4">The Basketball Man</h2>
-                          <h5>Arwork 6</h5>
-                          <p>Artist: George Mico Catipay</p>
-                          <a href="https://www.facebook.com/george.catipay.9" class="btn-floating btn-small indigo darken-4" target="_blank" alt="Facebook">
-                            <i class="fab fa-facebook"></i></a>
-                          <p>Curry has achieved numerous accolades, including multiple NBA Most Valuable Player (MVP) awards. He played a crucial role in leading the Golden State Warriors to multiple NBA championships. Known for his exceptional three-point shooting ability, ball-handling skills, and leadership on the court, Stephen Curry has had a significant impact on the game of basketball.</p>
-                        </div>
-                      </div>
-                      <div class="row">
-                        <div class="col s12 l4">
-                            <img src="img/bruno.jpg" alt="" class="responsive-img materialboxed">
-                        </div>
-                        <div class="col s12 l6 offset-l1">
-                          <h2 class="indigo-text text-darken-4">Dog's Love</h2>
-                          <h5>Artwork 7</h5>
-                          <p>Artist: Jomar Dindo</p>
-                          <a href="https://www.facebook.com/jomar.dindo.7" class="btn-floating btn-small indigo darken-4" target="_blank" alt="Facebook">
-                            <i class="fab fa-facebook"></i></a>
-                          <p>Aly is the owner of the dog, sadly the dog passed away this year. This artwork is dedicated to Aly, who's friend with the artist.Dogs are extraordinary companions, celebrated for their loyalty, diverse personalities, and affectionate nature. From the playful energy of a Labrador to the regal demeanor of a Greyhound, these four-legged friends come in various breeds, sizes, and coat types. With expressive eyes and wagging tails, dogs convey a wide range of emotions, forming deep connections with their human counterparts. Known for their intelligence, dogs serve as both loyal companions and versatile workers. Their unwavering love and boundless energy make them cherished members of families worldwide.</p>
-                        </div>
-                      </div>
-      </div>
-    </section>
-
-        <section id="about" class="content-section">
-            <h2>About Us</h2>
-            <p>Welcome to our artistic haven, where every stroke, color, and creation tells a unique story.</p>
-            <p>Dive into a world where imagination knows no bounds. Our website is a celebration of art in all its forms—where creativity thrives, and every piece unfolds a narrative.</p> 
-            <p>Join us on this visual journey, where the canvas is limitless, and artistic expression takes center stage. Embrace the beauty of the brushstroke and the power of visual storytelling</p>
-            <p> This is not just a website; it's an ode to the boundless world of art. Explore, experience, and be inspired.</p>
-            <p>Learn more about our art gallery and the passionate artists behind the masterpieces.</p>
-        </section>
-
-        <section id="contact" class="content-section">
-            <h2>Contact Us</h2>
-            <p>Have questions or want to inquire about a specific artwork? Feel free to reach out to us. We'd love to hear from you!</p>
-            <p>Contact Number: 09451759400</p>
-            <p>Email Address: esponillaalyssa@gmail.com</p>
-            <p>You can also contact us in our social media where you can see in the bottom of the page. Thank you!</p>
-        </section>
+          <div class="collage reveal" style="--d:250ms">
+            <div class="arch"><img src="aly.jpg" alt="Aly, the host of AlyArt Gallery"></div>
+            <div class="mini a"><img src="house.jpg" alt="Madrigal Houses artwork preview"></div>
+            <div class="mini b"><img src="bird.jpg" alt="Bird artwork preview"></div>
+            <div class="tag">Hi, I'm Aly</div>
+          </div>
         </div>
 
-  <footer class="page-footer">
-    <div class="container">
-      <h5>AlyArt Gallery</h5>
-      <p>&copy; 2023 AlyArt. All Rights Reserved.</p>
-  </div>
+        <a href="#gallery" class="scroll-cue" aria-label="Go to the gallery"><i class="fas fa-chevron-down"></i></a>
+      </section>
+
+      <div class="marquee" aria-hidden="true"><div class="track" id="track"></div></div>
+
+      <section class="quote">
+        <div class="wrap reveal">
+          <i class="fas fa-quote-left"></i>
+          <blockquote>The one thing that you have that nobody else has is you. Your voice, your mind, your story, your vision. So write and draw and build and play and dance and live only as you can.</blockquote>
+          <cite>Neil Gaiman</cite>
+        </div>
+      </section>
+
+      <section class="feature">
+        <div class="wrap feature-grid">
+          <div class="f-frame reveal"><img id="featImg" src="" alt=""></div>
+          <div class="reveal" style="--d:150ms">
+            <div class="kicker">Featured today</div>
+            <h2 id="featTitle"></h2>
+            <p class="f-by" id="featBy"></p>
+            <p class="f-text" id="featText"></p>
+            <div class="cta">
+              <button class="btn btn-gold" id="featOpen">View artwork <i class="fas fa-expand"></i></button>
+              <a href="#gallery" class="btn btn-ghost">Browse all</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ================= GALLERY ================= -->
+    <div class="page inner gallery" id="gallery">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <div class="kicker">Curated with love</div>
+          <h2>The Collection</h2>
+          <div class="orn">✦</div>
+          <p>Step into a world of creativity and beauty. Click an artwork for a closer look. Tap the heart to save your favorites.</p>
+        </div>
+
+        <div class="toolbar">
+          <div class="search">
+            <i class="fas fa-search"></i>
+            <input type="search" id="search" placeholder="Search title or artist" aria-label="Search artworks">
+          </div>
+          <select class="sort" id="sort" aria-label="Sort artworks">
+            <option value="default">Sort: Default</option>
+            <option value="az">Title A to Z</option>
+            <option value="za">Title Z to A</option>
+            <option value="artist">By artist</option>
+          </select>
+        </div>
+
+        <div class="filters" id="filters" role="group" aria-label="Filter artworks"></div>
+        <p class="count" id="count" aria-live="polite"></p>
+
+        <div class="masonry" id="masonry"></div>
+        <p class="empty" id="empty" hidden></p>
+      </div>
+    </div>
+
+    <!-- ================= ARTISTS ================= -->
+    <div class="page inner dark" id="artists">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <div class="kicker">The hands behind the art</div>
+          <h2>Meet the Artists</h2>
+          <div class="orn">✦</div>
+          <p>Learn more about the passionate artists behind the masterpieces.</p>
+        </div>
+
+        <div class="artist-grid" id="artistGrid"></div>
+      </div>
+    </div>
+
+    <!-- ================= MOMENTS ================= -->
+    <div class="page inner dark" id="moments">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <div class="kicker">Behind the gallery</div>
+          <h2>Moments</h2>
+          <div class="orn">✦</div>
+          <p>Small memories that shape the art. Click a photo to see it larger.</p>
+        </div>
+
+        <div class="polaroids" id="polaroids"></div>
+      </div>
+    </div>
+
+    <!-- ================= ABOUT ================= -->
+    <div class="page inner dark about" id="about">
+      <div class="wrap about-grid">
+        <div class="stack reveal">
+          <figure class="s1"><img src="checkmate.jpg" alt="Checkmate artwork"></figure>
+          <figure class="s2"><img src="beauty.jpg" alt="The Beauty artwork"></figure>
+          <figure class="s3"><img src="mans.jpg" alt="The Man artwork"></figure>
+        </div>
+
+        <div class="reveal" style="--d:150ms">
+          <div class="kicker">Our story</div>
+          <h2>About the Gallery</h2>
+          <p>Welcome to our artistic haven, where every stroke, color, and creation tells a unique story. Dive into a world where imagination knows no bounds. Our website is a celebration of art in all its forms, where creativity thrives and every piece unfolds a narrative.</p>
+          <p>Join us on this visual journey, where the canvas is limitless and artistic expression takes center stage. This is not just a website; it's an ode to the boundless world of art. Explore, experience, and be inspired.</p>
+
+          <div class="values">
+            <div class="value"><i class="fas fa-palette"></i><h3>Creativity</h3></div>
+            <div class="value"><i class="fas fa-book-open"></i><h3>Storytelling</h3></div>
+            <div class="value"><i class="fas fa-heart"></i><h3>Inspiration</h3></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= CONTACT ================= -->
+    <div class="page inner dark contact" id="contact">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <div class="kicker">Let's talk art</div>
+          <h2>Contact Us</h2>
+          <div class="orn">✦</div>
+        </div>
+        <p class="intro reveal">Have questions or want to inquire about a specific artwork? Feel free to reach out to us. We'd love to hear from you!</p>
+
+        <div class="contact-grid">
+          <a class="c-card reveal" href="tel:09451759400">
+            <i class="fas fa-phone-alt"></i>
+            <h3>Call</h3>
+            <p>09451759400</p>
+          </a>
+          <a class="c-card reveal" style="--d:120ms" href="mailto:esponillaalyssa@gmail.com">
+            <i class="fas fa-envelope"></i>
+            <h3>Email</h3>
+            <p>esponillaalyssa@gmail.com</p>
+          </a>
+          <div class="c-card reveal" style="--d:240ms">
+            <i class="fas fa-share-alt"></i>
+            <h3>Follow</h3>
+            <div class="socials">
+              <a href="https://www.facebook.com/LiesLoveLyss" target="_blank" rel="noopener" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+              <a href="https://twitter.com/Lys12258137" target="_blank" rel="noopener" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+              <a href="https://instagram.com/lieslovelys?igshid=M2RkZGJiMzhjOQ==" target="_blank" rel="noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            </div>
+          </div>
+        </div>
+
+        <div class="contact-split">
+          <div class="reveal">
+            <h3 class="split-title">Send an inquiry</h3>
+            <form class="form" id="form">
+              <div class="field">
+                <label for="fName">Your name</label>
+                <input id="fName" name="name" type="text" required autocomplete="name">
+              </div>
+              <div class="field">
+                <label for="fEmail">Your email</label>
+                <input id="fEmail" name="email" type="email" required autocomplete="email">
+              </div>
+              <div class="field">
+                <label for="fTopic">About</label>
+                <select id="fTopic" name="topic"></select>
+              </div>
+              <div class="field">
+                <label for="fMsg">Message</label>
+                <textarea id="fMsg" name="message" required></textarea>
+              </div>
+              <button type="submit" class="btn btn-gold">Send message <i class="fas fa-paper-plane"></i></button>
+              <p class="form-note" id="formNote" aria-live="polite"></p>
+            </form>
+          </div>
+
+          <div class="reveal" style="--d:150ms">
+            <h3 class="split-title">Questions</h3>
+            <details>
+              <summary>How do I inquire about an artwork?</summary>
+              <p>Use the form on this page, or call or email us. Pick the artwork in the "About" list so we know which piece you mean.</p>
+            </details>
+            <details>
+              <summary>Who made each artwork?</summary>
+              <p>Every artwork shows the name of its artist. Open the Artists tab to see their works and visit their Facebook page.</p>
+            </details>
+            <details>
+              <summary>How can I see an artwork bigger?</summary>
+              <p>Click the artwork in the Gallery tab. A larger view opens with the full story. Use the arrow buttons or the keyboard arrows to move between artworks.</p>
+            </details>
+            <details>
+              <summary>How do I save my favorites?</summary>
+              <p>Tap the heart on an artwork card. Then use the Favorites button in the Gallery tab to see only your saved artworks. Your favorites stay in this browser.</p>
+            </details>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <strong>AlyArt Gallery</strong>
+      <ul class="f-links">
+        <li><a href="#home">Home</a></li>
+        <li><a href="#gallery">Gallery</a></li>
+        <li><a href="#artists">Artists</a></li>
+        <li><a href="#moments">Moments</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <div>&copy; <span id="year">2026</span> AlyArt. All Rights Reserved.</div>
     </div>
   </footer>
 
-  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-  
+  <button class="to-top" id="toTop" aria-label="Back to top"><i class="fas fa-chevron-up"></i></button>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <!-- LIGHTBOX -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Photo viewer">
+    <button class="lb-close" id="lbClose" aria-label="Close"><i class="fas fa-times"></i></button>
+    <button class="lb-play" id="lbPlay" aria-label="Start slideshow"><i class="fas fa-play"></i></button>
+    <button class="lb-nav prev" id="lbPrev" aria-label="Previous"><i class="fas fa-chevron-left"></i></button>
+    <button class="lb-nav next" id="lbNext" aria-label="Next"><i class="fas fa-chevron-right"></i></button>
+
+    <div class="lb-body">
+      <div class="lb-img">
+        <div class="lb-frame"><img id="lbImg" src="" alt=""></div>
+      </div>
+      <div class="lb-info">
+        <div class="lb-scroll" id="lbScroll">
+          <span class="lb-no" id="lbNo"></span>
+          <h3 id="lbTitle"></h3>
+          <p class="lb-artist" id="lbArtist"></p>
+          <p class="lb-text" id="lbText"></p>
+        </div>
+        <div class="lb-foot" id="lbFoot">
+          <a id="lbLink" class="btn btn-gold" href="#" target="_blank" rel="noopener"><i class="fab fa-facebook-f"></i> Visit the artist</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
-    
-    document.addEventListener('DOMContentLoaded', function() {
-      M.AutoInit();
+    /* ================= DATA ================= */
+    const artworks = [
+      {
+        title: 'Madrigal Houses',
+        artist: 'Renz Rainier Pasagdan',
+        img: 'house.jpg',
+        link: 'https://www.facebook.com/renz.rainier212',
+        text: `The Casita itself is a vibrant and enchanting structure, adorned with colorful patterns and intricate designs. The magic within the house is a central element of the story, as it provides each family member with a special power that contributes to the overall harmony and well-being of the family and the community. The Madrigal house becomes a symbol of the family's unity and the strength that comes from embracing each member's distinctive qualities. The Casita is a magical place filled with love, warmth, and the rich cultural heritage of the Madrigal family.`
+      },
+      {
+        title: 'The Man',
+        artist: 'Sean Denver Smaniego',
+        img: 'mans.jpg',
+        link: 'https://www.facebook.com/seandenver.alien',
+        text: `In this captivating artwork, the stark contrast between the weathered face of an adventurous wanderer, marked by the sun's embrace and lines etched with tales of exploration, converges with the polished countenance of an urban intellectual, radiating intellect and refinement. Through a single gaze, the painting encapsulates the duality of divergent lifestyles: one shaped by the raw allure of nature's unpredictability and the other by the nuanced complexities of urban existence. Together, these faces tell a visual tale of two distinct worlds harmonizing in the canvas of life.`
+      },
+      {
+        title: 'Bird',
+        artist: 'Jomar Dindo',
+        img: 'bird.jpg',
+        link: 'https://www.facebook.com/jomar.dindo.7',
+        text: `Celebrating the breathtaking avian wonders of the Philippines. From the vibrant plumage of the Philippine Eagle to the melodious songs of the Luzon Bleeding-heart, our archipelago is a haven for unique and endangered bird species. Join us in marveling at the diverse feathered treasures that grace our skies, embodying the rich biodiversity and natural beauty of the Philippines.`
+      },
+      {
+        title: 'The Beauty',
+        artist: 'John Zenn Godani',
+        img: 'beauty.jpg',
+        link: 'https://www.facebook.com/jhonzenn.godani',
+        text: `Physical beauty may be reflected in features such as symmetry, clear skin, expressive eyes, and a radiant smile. However, true beauty often transcends these superficial aspects, encompassing a person's unique charm, kindness, and the way they carry themselves. Ultimately, beauty is a dynamic and personal experience, influenced by cultural, societal, and individual perspectives.`
+      },
+      {
+        title: 'Checkmate',
+        artist: 'John Earl Rance',
+        img: 'checkmate.jpg',
+        link: 'https://www.facebook.com/earl.filibustersmo',
+        text: `"Checkmate" is a term commonly used in the game of chess when a player's king is in a position to be captured and there is no way to escape, resulting in the end of the game. In the context of love, the concept of "checkmate" can be metaphorically applied to signify a profound and decisive moment in a romantic relationship. It might represent a moment of clarity or realization when two individuals recognize and accept their mutual feelings, leading to a harmonious and conclusive connection. In this metaphorical sense, "checkmate" in love could symbolize the victory of mutual understanding, emotional alignment, and the endearing capture of each other's hearts, marking the triumph of love over uncertainties and hesitations.`
+      },
+      {
+        title: 'The Basketball Man',
+        artist: 'George Mico Catipay',
+        img: 'stephen.jpg',
+        link: 'https://www.facebook.com/george.catipay.9',
+        text: `Curry has achieved numerous accolades, including multiple NBA Most Valuable Player (MVP) awards. He played a crucial role in leading the Golden State Warriors to multiple NBA championships. Known for his exceptional three-point shooting ability, ball-handling skills, and leadership on the court, Stephen Curry has had a significant impact on the game of basketball.`
+      },
+      {
+        title: "Dog's Love",
+        artist: 'Jomar Dindo',
+        img: 'bruno.jpg',
+        link: 'https://www.facebook.com/jomar.dindo.7',
+        text: `Aly is the owner of the dog. Sadly, the dog passed away this year. This artwork is dedicated to Aly, who is a friend of the artist. Dogs are extraordinary companions, celebrated for their loyalty, diverse personalities, and affectionate nature. From the playful energy of a Labrador to the regal demeanor of a Greyhound, these four-legged friends come in various breeds, sizes, and coat types. With expressive eyes and wagging tails, dogs convey a wide range of emotions, forming deep connections with their human counterparts. Known for their intelligence, dogs serve as both loyal companions and versatile workers. Their unwavering love and boundless energy make them cherished members of families worldwide.`
+      }
+    ];
+
+    /* Moments: palitan ang title kung hindi tama sa larawan */
+    const moments = [
+      { title: 'Graduation Day', img: 'grad.jpg' },
+      { title: 'School Days', img: 'school.jpg' },
+      { title: 'Pool Day', img: 'pool.jpg' },
+      { title: 'Ynares', img: 'ynares.jpg' }
+    ];
+
+    const artists = [...new Set(artworks.map(a => a.artist))];
+    const pad = n => String(n).padStart(2, '0');
+
+    const artItem = i => {
+      const a = artworks[i];
+      return {
+        img: a.img,
+        alt: a.title + ' by ' + a.artist,
+        title: a.title,
+        sub: 'Artist: ' + a.artist,
+        text: a.text,
+        link: a.link,
+        no: 'Artwork ' + pad(i + 1) + ' of ' + pad(artworks.length)
+      };
+    };
+
+    const momentItem = i => ({
+      img: moments[i].img,
+      alt: moments[i].title,
+      title: moments[i].title,
+      sub: 'Behind the gallery',
+      text: 'A moment from behind the scenes of AlyArt Gallery.',
+      link: '',
+      no: 'Moment ' + pad(i + 1) + ' of ' + pad(moments.length)
     });
 
-    function showSection(sectionId) {
-     
-      var sections = document.getElementsByClassName('content-section');
-      for (var i = 0; i < sections.length; i++) {
-        sections[i].style.display = 'none';
-      }
+    /* ================= HELPERS ================= */
+    const $ = id => document.getElementById(id);
 
-      var selectedSection = document.getElementById(sectionId);
-      if (selectedSection) {
-        selectedSection.style.display = 'block';
+    const toastEl = $('toast');
+    let toastTimer;
+    function toast(msg) {
+      toastEl.textContent = msg;
+      toastEl.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2200);
+    }
+
+    /* ================= FAVORITES ================= */
+    const FAV_KEY = 'alyart-favorites';
+    let favs = new Set();
+    try {
+      favs = new Set(JSON.parse(localStorage.getItem(FAV_KEY)) || []);
+    } catch (err) { /* ignore */ }
+
+    function saveFavs() {
+      try { localStorage.setItem(FAV_KEY, JSON.stringify([...favs])); } catch (err) { /* ignore */ }
+    }
+
+    /* ================= GALLERY ================= */
+    const masonry = $('masonry');
+    masonry.innerHTML = artworks.map((a, i) => `
+      <article class="piece reveal" style="--d:${(i % 3) * 120}ms" data-i="${i}">
+        <button class="open" aria-label="View ${a.title} by ${a.artist}">
+          <span class="frame">
+            <span class="imgwrap">
+              <img src="${a.img}" alt="${a.title} by ${a.artist}" loading="lazy">
+              <span class="shade"><i class="fas fa-expand"></i>&nbsp; View artwork</span>
+            </span>
+          </span>
+          <span class="placard">
+            <span class="no">Artwork ${pad(i + 1)}</span>
+            <span class="name">${a.title}</span>
+            <span class="by">by ${a.artist}</span>
+          </span>
+        </button>
+        <button class="fav" aria-pressed="false" aria-label="Add ${a.title} to favorites"><i class="far fa-heart"></i></button>
+      </article>
+    `).join('');
+
+    const pieces = [...masonry.querySelectorAll('.piece')];
+
+    const filters = $('filters');
+    filters.innerHTML =
+      `<button class="chip active" data-artist="all" aria-pressed="true">All</button>` +
+      artists.map(n => `<button class="chip" data-artist="${n}" aria-pressed="false">${n}</button>`).join('') +
+      `<button class="chip" data-artist="__fav" aria-pressed="false"><i class="fas fa-heart heart"></i> Favorites (<span id="favCount">0</span>)</button>`;
+
+    const chips = [...filters.querySelectorAll('.chip')];
+    const favCount = $('favCount');
+    const searchEl = $('search');
+    const sortEl = $('sort');
+    const countEl = $('count');
+    const emptyEl = $('empty');
+    const state = { artist: 'all', q: '', sort: 'default' };
+
+    function syncFavUI() {
+      pieces.forEach(p => {
+        const title = artworks[+p.dataset.i].title;
+        const on = favs.has(title);
+        const btn = p.querySelector('.fav');
+        btn.classList.toggle('on', on);
+        btn.setAttribute('aria-pressed', on);
+        btn.firstElementChild.className = on ? 'fas fa-heart' : 'far fa-heart';
+      });
+      favCount.textContent = favs.size;
+    }
+
+    function applyFilters() {
+      const q = state.q.trim().toLowerCase();
+      let shown = 0;
+
+      pieces.forEach(p => {
+        const a = artworks[+p.dataset.i];
+        let okArtist = true;
+        if (state.artist === '__fav') okArtist = favs.has(a.title);
+        else if (state.artist !== 'all') okArtist = a.artist === state.artist;
+        const okQ = !q || (a.title + ' ' + a.artist).toLowerCase().includes(q);
+        const ok = okArtist && okQ;
+        p.hidden = !ok;
+        if (ok) shown++;
+      });
+
+      const order = artworks.map((_, i) => i);
+      if (state.sort === 'az') order.sort((x, y) => artworks[x].title.localeCompare(artworks[y].title));
+      if (state.sort === 'za') order.sort((x, y) => artworks[y].title.localeCompare(artworks[x].title));
+      if (state.sort === 'artist') {
+        order.sort((x, y) =>
+          artworks[x].artist.localeCompare(artworks[y].artist) ||
+          artworks[x].title.localeCompare(artworks[y].title));
+      }
+      order.forEach((idx, rank) => { pieces[idx].style.order = rank; });
+
+      countEl.textContent = 'Showing ' + shown + ' of ' + artworks.length + ' artworks';
+      emptyEl.hidden = shown !== 0;
+      if (shown === 0) {
+        emptyEl.textContent = (state.artist === '__fav' && !q)
+          ? 'No favorites yet. Tap the heart on an artwork to save it.'
+          : 'No artworks found. Try another search.';
       }
     }
-    
-    document.addEventListener('DOMContentLoaded', function() {
-        var galleryItems = document.querySelectorAll('.gallery-item');
 
-    document.addEventListener('DOMContentLoaded', function() {
-      M.AutoInit();
-    });
-
-    galleryItems.forEach(function(item) {
-      item.addEventListener('mousemove', function(e) {
-        var rect = e.target.getBoundingClientRect();
-        var x = e.clientX - rect.left;
-        var y = e.clientY - rect.top;
-
-        var transformValue = `translate(-${x}px, -${y}px) scale(1.2)`;
-        e.target.style.transform = transformValue;
-      })
-    ;
-
-      item.addEventListener('mouseleave', function(e) {
-        if (!item.classList.contains('clicked')) {
-          e.target.style.transform = 'scale(1)';
-        }
-      })
-    ;
-    $(document).ready(function(){
-      $('.sidenav').sidenav();
-  });
-
-
-      item.addEventListener('click', function(e) {
-        item.classList.toggle('clicked');
+    function applyFilter(name) {
+      state.artist = name;
+      chips.forEach(c => {
+        const on = c.dataset.artist === name;
+        c.classList.toggle('active', on);
+        c.setAttribute('aria-pressed', on);
       });
+      applyFilters();
+    }
+
+    filters.addEventListener('click', e => {
+      const chip = e.target.closest('.chip');
+      if (chip) applyFilter(chip.dataset.artist);
     });
-});
-     
 
-</script>
-</div>
+    searchEl.addEventListener('input', () => { state.q = searchEl.value; applyFilters(); });
+    sortEl.addEventListener('change', () => { state.sort = sortEl.value; applyFilters(); });
 
+    masonry.addEventListener('click', e => {
+      const piece = e.target.closest('.piece');
+      if (!piece) return;
+      const i = +piece.dataset.i;
+
+      if (e.target.closest('.fav')) {
+        const title = artworks[i].title;
+        if (favs.has(title)) {
+          favs.delete(title);
+          toast('Removed from favorites');
+        } else {
+          favs.add(title);
+          toast('Added to favorites');
+        }
+        saveFavs();
+        syncFavUI();
+        if (state.artist === '__fav') applyFilters();
+        return;
+      }
+
+      if (e.target.closest('.open')) {
+        const visible = pieces
+          .filter(p => !p.hidden)
+          .sort((a, b) => (+a.style.order) - (+b.style.order))
+          .map(p => +p.dataset.i);
+        openLightbox(visible.map(artItem), visible.indexOf(i));
+      }
+    });
+
+    syncFavUI();
+    applyFilters();
+
+    /* ================= ARTISTS ================= */
+    const artistGrid = $('artistGrid');
+    artistGrid.innerHTML = artists.map((name, i) => {
+      const works = artworks.filter(a => a.artist === name);
+      const parts = name.split(' ');
+      const initials = parts[0][0] + parts[parts.length - 1][0];
+      return `
+        <div class="a-card reveal" style="--d:${(i % 3) * 100}ms">
+          <div class="avatar">${initials}</div>
+          <h3 title="${name}">${name}</h3>
+          <p>${works.length} ${works.length > 1 ? 'artworks' : 'artwork'}</p>
+          <div class="thumbs">${works.map(w => `<img src="${w.img}" alt="" loading="lazy">`).join('')}</div>
+          <div class="a-actions">
+            <button class="view" data-artist="${name}">View works</button>
+            <a class="fb" href="${works[0].link}" target="_blank" rel="noopener" aria-label="${name} on Facebook"><i class="fab fa-facebook-f"></i></a>
+          </div>
+        </div>`;
+    }).join('');
+
+    artistGrid.addEventListener('click', e => {
+      const btn = e.target.closest('.view');
+      if (!btn) return;
+      state.q = '';
+      searchEl.value = '';
+      applyFilter(btn.dataset.artist);
+      go('gallery');
+    });
+
+    /* ================= MOMENTS ================= */
+    const polaroids = $('polaroids');
+    polaroids.innerHTML = moments.map((m, i) => `
+      <button class="polaroid reveal" style="--d:${(i % 4) * 100}ms" data-i="${i}" aria-label="View ${m.title}">
+        <span class="pol-card">
+          <img src="${m.img}" alt="${m.title}" loading="lazy">
+          <span class="pol-cap">${m.title}</span>
+        </span>
+      </button>
+    `).join('');
+
+    polaroids.addEventListener('click', e => {
+      const b = e.target.closest('.polaroid');
+      if (b) openLightbox(moments.map((_, i) => momentItem(i)), +b.dataset.i);
+    });
+
+    /* ================= HOME EXTRAS ================= */
+    const row = artists.map(n => `<span>${n}<b>✦</b></span>`).join('');
+    $('track').innerHTML = row.repeat(4);
+
+    function countUp(el, target) {
+      let n = 0;
+      const stepSize = Math.max(1, Math.ceil(target / 25));
+      (function step() {
+        n = Math.min(target, n + stepSize);
+        el.textContent = n;
+        if (n < target) setTimeout(step, 60);
+      })();
+    }
+    countUp($('statArt'), artworks.length);
+    countUp($('statArtists'), artists.length);
+
+    /* Featured artwork: nagbabago kada araw */
+    const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
+    const featIdx = dayOfYear % artworks.length;
+    const feat = artworks[featIdx];
+    $('featImg').src = feat.img;
+    $('featImg').alt = feat.title + ' by ' + feat.artist;
+    $('featTitle').textContent = feat.title;
+    $('featBy').textContent = 'by ' + feat.artist;
+    $('featText').textContent = feat.text.slice(0, 230).replace(/\s+\S*$/, '') + '…';
+    $('featOpen').addEventListener('click', () => {
+      openLightbox(artworks.map((_, i) => artItem(i)), featIdx);
+    });
+
+    $('year').textContent = new Date().getFullYear();
+
+    /* ================= CONTACT FORM ================= */
+    const topic = $('fTopic');
+    topic.innerHTML =
+      '<option>General question</option>' +
+      artworks.map(a => `<option>${a.title}</option>`).join('');
+
+    $('form').addEventListener('submit', e => {
+      e.preventDefault();
+      const f = new FormData(e.target);
+      const subject = 'AlyArt Gallery inquiry: ' + f.get('topic');
+      const body =
+        'Name: ' + f.get('name') + '\n' +
+        'Email: ' + f.get('email') + '\n' +
+        'About: ' + f.get('topic') + '\n\n' +
+        f.get('message');
+      window.location.href =
+        'mailto:esponillaalyssa@gmail.com?subject=' + encodeURIComponent(subject) +
+        '&body=' + encodeURIComponent(body);
+      $('formNote').textContent = 'Your email app should open now. If it does not, send us an email directly.';
+    });
+
+    /* ================= TABS (ROUTER) ================= */
+    const nav = $('nav');
+    const burger = $('burger');
+    const menu = $('menu');
+    const menuLinks = [...menu.querySelectorAll('a')];
+    const pageIds = ['home', 'gallery', 'artists', 'moments', 'about', 'contact'];
+    const pageEls = {};
+    pageIds.forEach(id => { pageEls[id] = $(id); });
+    let current = 'home';
+
+    function closeMenu() {
+      menu.classList.remove('open');
+      burger.setAttribute('aria-expanded', 'false');
+      burger.innerHTML = '<i class="fas fa-bars"></i>';
+    }
+
+    function render(id) {
+      if (!pageIds.includes(id)) id = 'home';
+      current = id;
+      pageIds.forEach(p => pageEls[p].classList.toggle('active', p === id));
+      menuLinks.forEach(l => l.classList.toggle('active', l.dataset.page === id));
+      document.title = id === 'home'
+        ? 'AlyArt Gallery'
+        : id.charAt(0).toUpperCase() + id.slice(1) + ' · AlyArt Gallery';
+      window.scrollTo({ top: 0, behavior: 'instant' });
+      closeMenu();
+      onScroll();
+    }
+
+    function go(id) {
+      if (location.hash.slice(1) !== id) history.pushState(null, '', '#' + id);
+      render(id);
+    }
+
+    document.addEventListener('click', e => {
+      const a = e.target.closest('a[href^="#"]');
+      if (!a) return;
+      const id = a.getAttribute('href').slice(1);
+      if (pageIds.includes(id)) {
+        e.preventDefault();
+        go(id);
+      }
+    });
+
+    window.addEventListener('popstate', () => render(location.hash.slice(1)));
+
+    burger.addEventListener('click', () => {
+      const open = menu.classList.toggle('open');
+      burger.setAttribute('aria-expanded', open);
+      burger.innerHTML = open ? '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+    });
+
+    /* ================= SCROLL EFFECTS ================= */
+    const progress = $('progress');
+    const toTop = $('toTop');
+
+    function onScroll() {
+      const y = window.scrollY;
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      nav.classList.toggle('scrolled', y > 40 || current !== 'home');
+      toTop.classList.toggle('show', y > 700);
+      progress.style.transform = 'scaleX(' + (max > 0 ? y / max : 0) + ')';
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    toTop.addEventListener('click', () => window.scrollTo({ top: 0 }));
+
+    const revealObserver = new IntersectionObserver((entries, obs) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('in');
+          obs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+    /* ================= LIGHTBOX ================= */
+    const lb = $('lightbox');
+    const lbImg = $('lbImg');
+    const lbNo = $('lbNo');
+    const lbTitle = $('lbTitle');
+    const lbArtist = $('lbArtist');
+    const lbText = $('lbText');
+    const lbLink = $('lbLink');
+    const lbFoot = $('lbFoot');
+    const lbClose = $('lbClose');
+    const lbPlay = $('lbPlay');
+    const lbPrev = $('lbPrev');
+    const lbNext = $('lbNext');
+    const lbScroll = $('lbScroll');
+    const lbBody = lb.querySelector('.lb-body');
+    let items = [];
+    let pos = 0;
+    let lastFocus = null;
+    let timer = null;
+
+    function show(p) {
+      pos = (p + items.length) % items.length;
+      const it = items[pos];
+      lbImg.src = it.img;
+      lbImg.alt = it.alt;
+      lbNo.textContent = it.no;
+      lbTitle.textContent = it.title;
+      lbArtist.textContent = it.sub;
+      lbText.textContent = it.text;
+      lbFoot.hidden = !it.link;
+      if (it.link) lbLink.href = it.link;
+      lbScroll.scrollTop = 0;
+      lbBody.scrollTop = 0;
+    }
+
+    function setPlay(on) {
+      clearInterval(timer);
+      timer = null;
+      lbPlay.innerHTML = on ? '<i class="fas fa-pause"></i>' : '<i class="fas fa-play"></i>';
+      lbPlay.setAttribute('aria-label', on ? 'Pause slideshow' : 'Start slideshow');
+      if (on) timer = setInterval(() => show(pos + 1), 4500);
+    }
+
+    function step(d) {
+      show(pos + d);
+      if (timer) setPlay(true);
+    }
+
+    function openLightbox(list, index) {
+      items = list;
+      lastFocus = document.activeElement;
+      const many = items.length > 1;
+      lbPrev.hidden = lbNext.hidden = lbPlay.hidden = !many;
+      setPlay(false);
+      show(Math.max(0, index));
+      lb.classList.add('open');
+      document.body.style.overflow = 'hidden';
+      lbClose.focus();
+    }
+
+    function closeLightbox() {
+      setPlay(false);
+      lb.classList.remove('open');
+      document.body.style.overflow = '';
+      if (lastFocus) lastFocus.focus();
+    }
+
+    lbClose.addEventListener('click', closeLightbox);
+    lbPrev.addEventListener('click', () => step(-1));
+    lbNext.addEventListener('click', () => step(1));
+    lbPlay.addEventListener('click', () => setPlay(!timer));
+    lb.addEventListener('click', e => { if (e.target === lb) closeLightbox(); });
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') {
+        closeMenu();
+        if (lb.classList.contains('open')) closeLightbox();
+      }
+      if (lb.classList.contains('open')) {
+        if (e.key === 'ArrowLeft') step(-1);
+        if (e.key === 'ArrowRight') step(1);
+      }
+    });
+
+    /* ================= START ================= */
+    render(location.hash.slice(1));
   </script>
 </body>
 </html>
